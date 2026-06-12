@@ -1,0 +1,28 @@
+# meta/main.yml — Ansible Galaxy metadata
+---
+galaxy_info:
+  role_name: dashboard_graylog
+  author: jbsky
+  description: Deploy and manage Graylog dashboards via API (idempotent, recreate mode)
+  company: ""
+  license: MIT
+  min_ansible_version: "2.14"
+
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+
+  galaxy_tags:
+    - graylog
+    - dashboard
+    - monitoring
+    - logging
+    - observability
+
+dependencies: []

@@ -1,0 +1,1015 @@
+{
+  "dashboard": {
+    "type": "DASHBOARD",
+    "title": "Web Traffic Dashboard",
+    "summary": "HTTP/HTTPS traffic from reverse proxies (Traefik, HAProxy, nginx)",
+    "description": "HTTP/HTTPS traffic from reverse proxies (Traefik, HAProxy, nginx)",
+    "state": {
+      "16c8db53-0517-4069-b6c9-0ac8b18db940": {
+        "selected_fields": null,
+        "static_message_list_id": null,
+        "titles": {
+          "widget": {
+            "b608c1c4-f3da-4ea1-9ee8-2aae64e97f2d": "HTTP Requests Over Time",
+            "ab90a29d-065a-43d6-b1fc-b65a802a501a": "Web Sources",
+            "3c383514-7296-4255-9c57-1aed5253017a": "Log Levels",
+            "562e780a-9a52-4442-aaad-80e774fc4dc5": "Traefik Errors Over Time",
+            "b6f82924-1702-4cee-b6cc-092a44dd4086": "HAProxy Backends",
+            "27bb86a2-80b3-424c-ba83-58637e361393": "WordPress Activity",
+            "7d687750-2691-4529-b67a-f5044aee6993": "Web Error Table (source + message)",
+            "b8fd8079-9779-4d34-a205-27aac575fc0f": "Recent Web Logs",
+            "a3f1c842-9e01-4b5d-8f37-2c6d7e8a9b0c": "HTTP Status Codes",
+            "d9e5b7a3-4f21-4c8d-a6b2-1e3f5g7h9i0k": "Top URLs"
+          },
+          "tab": {
+            "title": "Web"
+          }
+        },
+        "widgets": [
+          {
+            "id": "b608c1c4-f3da-4ea1-9ee8-2aae64e97f2d",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "group",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "ab90a29d-065a-43d6-b1fc-b65a802a501a",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx* OR source:wordpress*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "source"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 10,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "3c383514-7296-4255-9c57-1aed5253017a",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "level"
+                  ],
+                  "config": {
+                    "limit": 5
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 5,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "562e780a-9a52-4442-aaad-80e774fc4dc5",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* AND (level:3 OR level:4)"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "group",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "b6f82924-1702-4cee-b6cc-092a44dd4086",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:haproxy*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "group",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "container"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 10,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "27bb86a2-80b3-424c-ba83-58637e361393",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:wordpress*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "group",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "7d687750-2691-4529-b67a-f5044aee6993",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:traefik* OR source:haproxy* OR source:nginx*) AND (level:3 OR level:4)"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "table",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "source"
+                  ],
+                  "config": {
+                    "limit": 20
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 20,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "b8fd8079-9779-4d34-a205-27aac575fc0f",
+            "type": "messages",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "fields": [
+                "timestamp",
+                "source",
+                "http_method",
+                "http_status",
+                "http_url",
+                "http_response_size",
+                "http_client_ip"
+              ],
+              "show_message_row": true,
+              "show_summary": false
+            }
+          },
+          {
+            "id": "a3f1c842-9e01-4b5d-8f37-2c6d7e8a9b0c",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:http_status"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "http_status"
+                  ],
+                  "config": {
+                    "limit": 15
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 15,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "d9e5b7a3-4f21-4c8d-a6b2-1e3f5g7h9i0k",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:http_url"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "table",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "http_url"
+                  ],
+                  "config": {
+                    "limit": 20
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [
+                {
+                  "type": "series",
+                  "field": "count()",
+                  "direction": "Descending"
+                }
+              ],
+              "rollup": true,
+              "row_limit": 20,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          }
+        ],
+        "widget_mapping": {
+          "b608c1c4-f3da-4ea1-9ee8-2aae64e97f2d": [
+            "9ba75b64-67f5-43ae-a51c-62ae107628c9"
+          ],
+          "ab90a29d-065a-43d6-b1fc-b65a802a501a": [
+            "82353d20-6e37-43df-bc12-81cef9154b55"
+          ],
+          "3c383514-7296-4255-9c57-1aed5253017a": [
+            "8f7fdc64-e570-4c34-9e62-d00b8d4a808c"
+          ],
+          "562e780a-9a52-4442-aaad-80e774fc4dc5": [
+            "cf85a9a1-89b3-426f-a4d0-4d674d4ccbed"
+          ],
+          "b6f82924-1702-4cee-b6cc-092a44dd4086": [
+            "6421a797-5d8b-4068-ad05-0faef6434fb6"
+          ],
+          "27bb86a2-80b3-424c-ba83-58637e361393": [
+            "731120e5-a545-428b-ba96-8cd2eed6ed39"
+          ],
+          "7d687750-2691-4529-b67a-f5044aee6993": [
+            "c7b343fb-150d-46c0-958d-08f14e7844d4"
+          ],
+          "b8fd8079-9779-4d34-a205-27aac575fc0f": [
+            "e956e59f-15c4-4a29-961f-529e89b87ce2"
+          ],
+          "a3f1c842-9e01-4b5d-8f37-2c6d7e8a9b0c": [
+            "f7e23d41-8a1b-4c5e-9d2f-3b4a6c8e0f12"
+          ],
+          "d9e5b7a3-4f21-4c8d-a6b2-1e3f5g7h9i0k": [
+            "c8b6a4e2-3d1f-4e5c-b7a9-2f4d6e8g0h1i"
+          ]
+        },
+        "positions": {
+          "b608c1c4-f3da-4ea1-9ee8-2aae64e97f2d": {
+            "col": 1,
+            "row": 1,
+            "height": 3,
+            "width": 6
+          },
+          "ab90a29d-065a-43d6-b1fc-b65a802a501a": {
+            "col": 7,
+            "row": 1,
+            "height": 3,
+            "width": 3
+          },
+          "3c383514-7296-4255-9c57-1aed5253017a": {
+            "col": 10,
+            "row": 1,
+            "height": 3,
+            "width": 3
+          },
+          "562e780a-9a52-4442-aaad-80e774fc4dc5": {
+            "col": 1,
+            "row": 4,
+            "height": 3,
+            "width": 6
+          },
+          "b6f82924-1702-4cee-b6cc-092a44dd4086": {
+            "col": 7,
+            "row": 4,
+            "height": 3,
+            "width": 6
+          },
+          "27bb86a2-80b3-424c-ba83-58637e361393": {
+            "col": 1,
+            "row": 7,
+            "height": 3,
+            "width": 6
+          },
+          "7d687750-2691-4529-b67a-f5044aee6993": {
+            "col": 7,
+            "row": 7,
+            "height": 3,
+            "width": 6
+          },
+          "b8fd8079-9779-4d34-a205-27aac575fc0f": {
+            "col": 1,
+            "row": 13,
+            "width": 12,
+            "height": 5
+          },
+          "a3f1c842-9e01-4b5d-8f37-2c6d7e8a9b0c": {
+            "col": 1,
+            "row": 10,
+            "width": 4,
+            "height": 3
+          },
+          "d9e5b7a3-4f21-4c8d-a6b2-1e3f5g7h9i0k": {
+            "col": 5,
+            "row": 10,
+            "width": 8,
+            "height": 3
+          }
+        },
+        "formatting": null,
+        "display_mode_settings": {
+          "positions": {}
+        }
+      }
+    },
+    "properties": [],
+    "requires": {},
+    "owner": "admin",
+    "favorite": false
+  },
+  "search": {
+    "queries": [
+      {
+        "id": "16c8db53-0517-4069-b6c9-0ac8b18db940",
+        "query": {
+          "type": "elasticsearch",
+          "query_string": ""
+        },
+        "timerange": {
+          "type": "relative",
+          "range": 86400
+        },
+        "filter": {
+          "type": "or",
+          "filters": []
+        },
+        "search_types": [
+          {
+            "id": "9ba75b64-67f5-43ae-a51c-62ae107628c9",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "9f9456e5-5275-4a67-b176-68be987668bc",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "time",
+                "field": "timestamp",
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "sort": [],
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "82353d20-6e37-43df-bc12-81cef9154b55",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx* OR source:wordpress*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "d71b01a7-f43f-444f-9177-c23da1299df7",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "source",
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "sort": [],
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "8f7fdc64-e570-4c34-9e62-d00b8d4a808c",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "8c2c05b8-99e6-4982-8809-4ef185f560fc",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "level",
+                "limit": 5
+              }
+            ],
+            "column_groups": [],
+            "sort": [],
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "cf85a9a1-89b3-426f-a4d0-4d674d4ccbed",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* AND (level:3 OR level:4)"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "7d8739e2-6803-482d-a0af-5b1f947d121f",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "time",
+                "field": "timestamp",
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "sort": [],
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "6421a797-5d8b-4068-ad05-0faef6434fb6",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:haproxy*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "ac3360f0-1214-4092-8d24-752b9e5eb73b",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "container",
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "sort": [],
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "731120e5-a545-428b-ba96-8cd2eed6ed39",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:wordpress*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "2f3c73c7-f3c7-4dea-ab4f-b282578503cd",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "time",
+                "field": "timestamp",
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "sort": [],
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "c7b343fb-150d-46c0-958d-08f14e7844d4",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:traefik* OR source:haproxy* OR source:nginx*) AND (level:3 OR level:4)"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "a93cf3ea-3e8c-4062-b6f0-0291381d1694",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "source",
+                "limit": 20
+              }
+            ],
+            "column_groups": [],
+            "sort": [],
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "e956e59f-15c4-4a29-961f-529e89b87ce2",
+            "type": "messages",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:traefik* OR source:haproxy* OR source:nginx*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "sort": [
+              {
+                "field": "timestamp",
+                "order": "DESC"
+              }
+            ],
+            "limit": 150,
+            "offset": 0,
+            "filter": null,
+            "filters": [],
+            "name": null
+          },
+          {
+            "id": "f7e23d41-8a1b-4c5e-9d2f-3b4a6c8e0f12",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:http_status"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "http_status"
+                ],
+                "limit": 15
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [
+              {
+                "type": "series",
+                "field": "count()",
+                "direction": "Descending"
+              }
+            ],
+            "rollup": true,
+            "filter": null,
+            "filters": [],
+            "name": "chart"
+          },
+          {
+            "id": "c8b6a4e2-3d1f-4e5c-b7a9-2f4d6e8g0h1i",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:http_url"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "http_url"
+                ],
+                "limit": 20
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [
+              {
+                "type": "series",
+                "field": "count()",
+                "direction": "Descending"
+              }
+            ],
+            "rollup": true,
+            "filter": null,
+            "filters": [],
+            "name": "chart"
+          }
+        ]
+      }
+    ],
+    "parameters": []
+  }
+}

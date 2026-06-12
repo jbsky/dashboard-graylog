@@ -1,0 +1,799 @@
+{
+  "dashboard": {
+    "type": "DASHBOARD",
+    "title": "Infrastructure (Proxmox) Dashboard",
+    "summary": "Proxmox hypervisor logs: PVE events, errors, facilities",
+    "description": "Proxmox hypervisor logs: PVE events, errors, facilities",
+    "state": {
+      "75019010-2f98-48f9-ad0c-c72c956fd17d": {
+        "selected_fields": null,
+        "static_message_list_id": null,
+        "titles": {
+          "widget": {
+            "i-w1": "Log Volume (PVE)",
+            "i-w2": "Top Sources",
+            "i-w3": "Log Levels",
+            "i-w4": "Proxmox Events Over Time",
+            "i-w5": "Errors (PVE)",
+            "i-w6": "Facilities",
+            "i-w7": "Services",
+            "i-w8": "Recent PVE Logs"
+          },
+          "tab": {
+            "title": "Infrastructure"
+          }
+        },
+        "widgets": [
+          {
+            "id": "i-w1",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "source"
+                  ],
+                  "config": {
+                    "limit": 8
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "i-w2",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "source"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 10,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "i-w3",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "level"
+                  ],
+                  "config": {
+                    "limit": 8
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 8,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "i-w4",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "i-w5",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:pve* OR source:proxmox*) AND (level:3 OR level:4)"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "i-w6",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:pve* OR source:proxmox*) AND _exists_:facility"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "facility"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 10,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "i-w7",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "facility_num"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 10,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "i-w8",
+            "type": "messages",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "fields": [
+                "timestamp",
+                "source",
+                "facility",
+                "level",
+                "message"
+              ],
+              "show_message_row": true,
+              "show_summary": false
+            }
+          }
+        ],
+        "widget_mapping": {
+          "i-w1": [
+            "i-s1"
+          ],
+          "i-w2": [
+            "i-s2"
+          ],
+          "i-w3": [
+            "i-s3"
+          ],
+          "i-w4": [
+            "i-s4"
+          ],
+          "i-w5": [
+            "i-s5"
+          ],
+          "i-w6": [
+            "i-s6"
+          ],
+          "i-w7": [
+            "i-s7"
+          ],
+          "i-w8": [
+            "i-s8"
+          ]
+        },
+        "positions": {
+          "i-w1": {
+            "col": 1,
+            "row": 1,
+            "width": 6,
+            "height": 3
+          },
+          "i-w2": {
+            "col": 7,
+            "row": 1,
+            "width": 3,
+            "height": 3
+          },
+          "i-w3": {
+            "col": 10,
+            "row": 1,
+            "width": 3,
+            "height": 3
+          },
+          "i-w4": {
+            "col": 1,
+            "row": 4,
+            "width": 6,
+            "height": 3
+          },
+          "i-w5": {
+            "col": 7,
+            "row": 4,
+            "width": 6,
+            "height": 3
+          },
+          "i-w6": {
+            "col": 1,
+            "row": 7,
+            "width": 6,
+            "height": 3
+          },
+          "i-w7": {
+            "col": 7,
+            "row": 7,
+            "width": 6,
+            "height": 3
+          },
+          "i-w8": {
+            "col": 1,
+            "row": 10,
+            "width": 12,
+            "height": 5
+          }
+        }
+      }
+    }
+  },
+  "search": {
+    "queries": [
+      {
+        "id": "75019010-2f98-48f9-ad0c-c72c956fd17d",
+        "timerange": {
+          "type": "relative",
+          "range": 86400
+        },
+        "query": {
+          "type": "elasticsearch",
+          "query_string": ""
+        },
+        "search_types": [
+          {
+            "id": "i-s1",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "time",
+                "fields": [
+                  "timestamp"
+                ],
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "i-s2",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "source"
+                ],
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "i-s3",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "level"
+                ],
+                "limit": 8
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "i-s4",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "time",
+                "fields": [
+                  "timestamp"
+                ],
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "i-s5",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:pve* OR source:proxmox*) AND (level:3 OR level:4)"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "time",
+                "fields": [
+                  "timestamp"
+                ],
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "i-s6",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:pve* OR source:proxmox*) AND _exists_:facility"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "facility"
+                ],
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "i-s7",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "facility_num"
+                ],
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "i-s8",
+            "type": "messages",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:pve* OR source:proxmox*"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "limit": 150,
+            "offset": 0,
+            "sort": [
+              {
+                "field": "timestamp",
+                "order": "DESC"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

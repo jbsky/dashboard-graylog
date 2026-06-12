@@ -1,0 +1,54 @@
+# tasks/_deploy_one.yml — Deploy a single dashboard via Graylog API
+# Loop var: _dashboard (dict with .title and .file)
+---
+- name: "Read dashboard JSON: {{ _dashboard.title }}"
+  ansible.builtin.slurp:
+    src: "{{ role_path }}/files/dashboards/{{ _dashboard.file }}"
+  register: _gd_raw
+  delegate_to: localhost
+  tags: [config]
+
+- name: "Parse JSON: {{ _dashboard.title }}"
+  ansible.builtin.set_fact:
+    _gd_data: "{{ _gd_raw.content | b64decode | from_json }}"
+  tags: [config]
+
+- name: "Create search: {{ _dashboard.title }}"
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/views/search"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body: "{{ _gd_data.search }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _gd_search
+  tags: [config]
+
+- name: "Create dashboard: {{ _dashboard.title }}"
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/views/dashboards"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      entity: "{{ _gd_data.dashboard | combine({'search_id': _gd_search.json.id}) }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _gd_result
+  tags: [config]
+
+- name: "Deployed: {{ _dashboard.title }}"
+  ansible.builtin.debug:
+    msg: "ID={{ _gd_result.json.id }} title={{ _gd_result.json.title }}"
+  tags: [config]

@@ -1,0 +1,889 @@
+{
+  "dashboard": {
+    "type": "DASHBOARD",
+    "title": "K3s & Containers Dashboard",
+    "summary": "Kubernetes cluster logs: pods, namespaces, images, nodes",
+    "description": "Kubernetes cluster logs: pods, namespaces, images, nodes",
+    "state": {
+      "117cc1aa-3d09-428e-bc75-125ee8aeb592": {
+        "selected_fields": null,
+        "static_message_list_id": null,
+        "titles": {
+          "widget": {
+            "k-w1": "Log Volume (K3s)",
+            "k-w2": "Top Sources",
+            "k-w3": "Log Levels",
+            "k-w4": "Pods (containers)",
+            "k-w5": "Errors (K3s)",
+            "k-w6": "Tags (namespaces)",
+            "k-w7": "Images",
+            "k-w8": "Nodes",
+            "k-w9": "Recent K3s Logs"
+          },
+          "tab": {
+            "title": "K3s"
+          }
+        },
+        "widgets": [
+          {
+            "id": "k-w1",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "source"
+                  ],
+                  "config": {
+                    "limit": 8
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w2",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "source"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 10,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w3",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "level"
+                  ],
+                  "config": {
+                    "limit": 8
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 8,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w4",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:container"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "container"
+                  ],
+                  "config": {
+                    "limit": 15
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 15,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w5",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:k3s* OR _exists_:container) AND (level:3 OR level:4)"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w6",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:container"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "tag"
+                  ],
+                  "config": {
+                    "limit": 12
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 12,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w7",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:image"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "image"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 10,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w8",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:node"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "node"
+                  ],
+                  "config": {
+                    "limit": 5
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 5,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "k-w9",
+            "type": "messages",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "fields": [
+                "timestamp",
+                "source",
+                "container",
+                "node",
+                "level",
+                "message"
+              ],
+              "show_message_row": true,
+              "show_summary": false
+            }
+          }
+        ],
+        "widget_mapping": {
+          "k-w1": [
+            "k-s1"
+          ],
+          "k-w2": [
+            "k-s2"
+          ],
+          "k-w3": [
+            "k-s3"
+          ],
+          "k-w4": [
+            "k-s4"
+          ],
+          "k-w5": [
+            "k-s5"
+          ],
+          "k-w6": [
+            "k-s6"
+          ],
+          "k-w7": [
+            "k-s7"
+          ],
+          "k-w8": [
+            "k-s8"
+          ],
+          "k-w9": [
+            "k-s9"
+          ]
+        },
+        "positions": {
+          "k-w1": {
+            "col": 1,
+            "row": 1,
+            "width": 6,
+            "height": 3
+          },
+          "k-w2": {
+            "col": 7,
+            "row": 1,
+            "width": 3,
+            "height": 3
+          },
+          "k-w3": {
+            "col": 10,
+            "row": 1,
+            "width": 3,
+            "height": 3
+          },
+          "k-w4": {
+            "col": 1,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "k-w5": {
+            "col": 5,
+            "row": 4,
+            "width": 8,
+            "height": 3
+          },
+          "k-w6": {
+            "col": 1,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "k-w7": {
+            "col": 5,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "k-w8": {
+            "col": 9,
+            "row": 7,
+            "width": 4,
+            "height": 3
+          },
+          "k-w9": {
+            "col": 1,
+            "row": 10,
+            "width": 12,
+            "height": 5
+          }
+        }
+      }
+    }
+  },
+  "search": {
+    "queries": [
+      {
+        "id": "117cc1aa-3d09-428e-bc75-125ee8aeb592",
+        "timerange": {
+          "type": "relative",
+          "range": 86400
+        },
+        "query": {
+          "type": "elasticsearch",
+          "query_string": ""
+        },
+        "search_types": [
+          {
+            "id": "k-s1",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "time",
+                "fields": [
+                  "timestamp"
+                ],
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s2",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "source"
+                ],
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s3",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "level"
+                ],
+                "limit": 8
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s4",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:container"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "container"
+                ],
+                "limit": 15
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s5",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "(source:k3s* OR _exists_:container) AND (level:3 OR level:4)"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "time",
+                "fields": [
+                  "timestamp"
+                ],
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s6",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:container"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "tag"
+                ],
+                "limit": 12
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s7",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:image"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "image"
+                ],
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s8",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "_exists_:node"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "name": "chart",
+            "row_groups": [
+              {
+                "type": "values",
+                "fields": [
+                  "node"
+                ],
+                "limit": 5
+              }
+            ],
+            "column_groups": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "count()",
+                "field": null
+              }
+            ],
+            "sort": [],
+            "rollup": true
+          },
+          {
+            "id": "k-s9",
+            "type": "messages",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:k3s* OR _exists_:container"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "filter": null,
+            "filters": [],
+            "limit": 150,
+            "offset": 0,
+            "sort": [
+              {
+                "field": "timestamp",
+                "order": "DESC"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

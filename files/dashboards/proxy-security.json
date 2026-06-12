@@ -1,0 +1,1123 @@
+{
+  "search": {
+    "queries": [
+      {
+        "id": "84e209eb-2628-4224-a050-fb039df59cf7",
+        "query": {
+          "type": "elasticsearch",
+          "query_string": ""
+        },
+        "timerange": {
+          "type": "relative",
+          "range": 86400
+        },
+        "filter": {
+          "type": "or",
+          "filters": []
+        },
+        "search_types": [
+          {
+            "id": "1ddddf5f-ff73-48c4-88a9-fc0288ce1348",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "a7c685af-3ddb-493b-b3f1-ba58623b6a7b",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "time",
+                "field": "timestamp",
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [
+              {
+                "type": "values",
+                "field": "squid_status",
+                "limit": 6
+              }
+            ],
+            "sort": []
+          },
+          {
+            "id": "267cf087-6853-48d3-b6a1-d9c548e22a0f",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "6153c031-cfb6-486f-bef3-e9dbf4617114",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "squid_status",
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "b2c5e7ed-ef65-49d4-9155-9e2591123ee5",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND NOT squid_sni:\"-\""
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "b0a7d0f7-8399-484a-a547-f147cc6544dd",
+                "field": null
+              },
+              {
+                "type": "sum",
+                "id": "65fde60b-dde1-4b50-ac56-7d461593caa2",
+                "field": "squid_bytes"
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "squid_sni",
+                "limit": 20
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "f6803d33-3968-4e59-b800-9550bc27fba0",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND (squid_status:TCP_DENIED OR squid_bump_mode:terminate OR squid_http_code:403)"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "0a99bb08-29a9-43c8-ab4b-29328a34750c",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "squid_client_ip",
+                "limit": 15
+              },
+              {
+                "type": "values",
+                "field": "squid_sni",
+                "limit": 15
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "b04e4f1e-dbde-4439-9e7e-d3ec01b0ca9c",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND squid_bump_mode:(splice OR terminate)"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "5d0f029b-f363-49fd-9b0d-011e6dca5c5d",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "squid_client_ip",
+                "limit": 10
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "8bc0ce7b-8f81-47aa-bcb0-40397a524c86",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND NOT squid_bump_mode:\"-\""
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "522d2ab9-1f15-4287-8a8e-c04c7c4171a0",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "squid_bump_mode",
+                "limit": 5
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "dde031bc-3be6-45a7-b087-f510f064cbc6",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND squid_bump_mode:(splice OR terminate)"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "587b372c-470f-4fd4-ac9f-4f14ab49f2d7",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "squid_client_ip",
+                "limit": 10
+              },
+              {
+                "type": "values",
+                "field": "squid_sni",
+                "limit": 20
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "022be4e2-42f4-4713-95c8-aa39dbae4193",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:clamav-icap"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "5e8aef07-13fd-40eb-98c6-5f644156b776",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "time",
+                "field": "timestamp",
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [
+              {
+                "type": "values",
+                "field": "icap_mode",
+                "limit": 3
+              }
+            ],
+            "sort": []
+          },
+          {
+            "id": "fe32176b-79fd-45cb-b675-51eecdcccef6",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:clamav-icap"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "fa2eaa8f-b248-46c6-833e-d062fc664928",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "values",
+                "field": "icap_response_code",
+                "limit": 5
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "9d694423-8848-4b31-8610-ae4867908e52",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND squid_client_ip:192.168.4.197"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "c24ad49b-4268-4994-a41b-c074ca6a51d5",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "time",
+                "field": "timestamp",
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "c81e5141-6e7d-4918-98c7-d54100e33020",
+            "type": "messages",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy OR source:clamav-icap"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "sort": [
+              {
+                "field": "timestamp",
+                "order": "DESC"
+              }
+            ],
+            "limit": 150,
+            "offset": 0
+          }
+        ]
+      }
+    ]
+  },
+  "dashboard": {
+    "type": "DASHBOARD",
+    "title": "Proxy & AV Security",
+    "summary": "Squid transparent/explicit proxy + ClamAV/c-icap antivirus",
+    "description": "Transparent proxy (VLAN4 IoT whitelist), explicit proxy (all VLANs), ClamAV ICAP scanning.",
+    "state": {
+      "84e209eb-2628-4224-a050-fb039df59cf7": {
+        "selected_fields": null,
+        "static_message_list_id": null,
+        "titles": {
+          "widget": {
+            "75a92ad3-20b0-4b59-bb51-b791630b3e51": "Proxy Traffic Over Time",
+            "f54bc9db-cdeb-4612-b634-448719ea8a63": "Status Distribution",
+            "83a04018-7628-4b06-8b04-e64e5389bf4d": "Top Domains (SNI)",
+            "c0c6b9d3-bc46-42b5-bf61-300cb3aab908": "Denied / Terminated Requests",
+            "2d9aede7-f6a6-43c5-88e2-dd2fcfc54693": "Transparent Clients",
+            "f40662ad-7b16-4c26-ac45-330bb13e6eb5": "Bump Mode (splice/bump/terminate)",
+            "eb44ebcb-7ff6-4711-bbcb-c30a5a6ca64d": "Transparent Proxy Detail",
+            "5fb1c151-677f-4cb4-999b-cb79b7d720b9": "ClamAV/ICAP Scan Activity",
+            "83dc8681-c9e9-429b-89fc-ef05e4fe4ae4": "ICAP Response Codes",
+            "81db483c-ab10-4724-a4a2-c6513eaa1bf9": "Blocked Device Activity (rm4-mini)",
+            "0ed3dc39-aa94-4080-86ba-58144c55569b": "Recent Proxy Logs"
+          },
+          "tab": {
+            "title": "Proxy & AV"
+          }
+        },
+        "widgets": [
+          {
+            "id": "75a92ad3-20b0-4b59-bb51-b791630b3e51",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "stack",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_status"
+                  ],
+                  "config": {
+                    "limit": 6
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "f54bc9db-cdeb-4612-b634-448719ea8a63",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_status"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "83a04018-7628-4b06-8b04-e64e5389bf4d",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND NOT squid_sni:\"-\""
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "table",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_sni"
+                  ],
+                  "config": {
+                    "limit": 20
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                },
+                {
+                  "function": "sum(squid_bytes)",
+                  "config": {
+                    "name": "Sum",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 20,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "c0c6b9d3-bc46-42b5-bf61-300cb3aab908",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND (squid_status:TCP_DENIED OR squid_bump_mode:terminate OR squid_http_code:403)"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "table",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_client_ip"
+                  ],
+                  "config": {
+                    "limit": 15
+                  }
+                },
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_sni"
+                  ],
+                  "config": {
+                    "limit": 15
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 20,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "2d9aede7-f6a6-43c5-88e2-dd2fcfc54693",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND squid_bump_mode:(splice OR terminate)"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_client_ip"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "f40662ad-7b16-4c26-ac45-330bb13e6eb5",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND NOT squid_bump_mode:\"-\""
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_bump_mode"
+                  ],
+                  "config": {
+                    "limit": 5
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "eb44ebcb-7ff6-4711-bbcb-c30a5a6ca64d",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND squid_bump_mode:(splice OR terminate)"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "table",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_client_ip"
+                  ],
+                  "config": {
+                    "limit": 10
+                  }
+                },
+                {
+                  "type": "values",
+                  "fields": [
+                    "squid_sni"
+                  ],
+                  "config": {
+                    "limit": 20
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": 20,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "5fb1c151-677f-4cb4-999b-cb79b7d720b9",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:clamav-icap"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "stack",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "icap_mode"
+                  ],
+                  "config": {
+                    "limit": 3
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "83dc8681-c9e9-429b-89fc-ef05e4fe4ae4",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:clamav-icap"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "pie",
+              "visualization_config": null,
+              "row_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "icap_response_code"
+                  ],
+                  "config": {
+                    "limit": 5
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "81db483c-ab10-4724-a4a2-c6513eaa1bf9",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy AND squid_client_ip:192.168.4.197"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "group",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
+          {
+            "id": "0ed3dc39-aa94-4080-86ba-58144c55569b",
+            "type": "messages",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy OR source:clamav-icap"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "fields": [
+                "timestamp",
+                "source",
+                "squid_client_ip",
+                "squid_method",
+                "squid_sni",
+                "squid_url",
+                "squid_status",
+                "squid_http_code",
+                "squid_bump_mode"
+              ],
+              "show_message_row": true,
+              "show_summary": false,
+              "decorators": []
+            }
+          }
+        ],
+        "widget_mapping": {
+          "75a92ad3-20b0-4b59-bb51-b791630b3e51": [
+            "1ddddf5f-ff73-48c4-88a9-fc0288ce1348"
+          ],
+          "f54bc9db-cdeb-4612-b634-448719ea8a63": [
+            "267cf087-6853-48d3-b6a1-d9c548e22a0f"
+          ],
+          "83a04018-7628-4b06-8b04-e64e5389bf4d": [
+            "b2c5e7ed-ef65-49d4-9155-9e2591123ee5"
+          ],
+          "c0c6b9d3-bc46-42b5-bf61-300cb3aab908": [
+            "f6803d33-3968-4e59-b800-9550bc27fba0"
+          ],
+          "2d9aede7-f6a6-43c5-88e2-dd2fcfc54693": [
+            "b04e4f1e-dbde-4439-9e7e-d3ec01b0ca9c"
+          ],
+          "f40662ad-7b16-4c26-ac45-330bb13e6eb5": [
+            "8bc0ce7b-8f81-47aa-bcb0-40397a524c86"
+          ],
+          "eb44ebcb-7ff6-4711-bbcb-c30a5a6ca64d": [
+            "dde031bc-3be6-45a7-b087-f510f064cbc6"
+          ],
+          "5fb1c151-677f-4cb4-999b-cb79b7d720b9": [
+            "022be4e2-42f4-4713-95c8-aa39dbae4193"
+          ],
+          "83dc8681-c9e9-429b-89fc-ef05e4fe4ae4": [
+            "fe32176b-79fd-45cb-b675-51eecdcccef6"
+          ],
+          "81db483c-ab10-4724-a4a2-c6513eaa1bf9": [
+            "9d694423-8848-4b31-8610-ae4867908e52"
+          ],
+          "0ed3dc39-aa94-4080-86ba-58144c55569b": [
+            "c81e5141-6e7d-4918-98c7-d54100e33020"
+          ]
+        },
+        "positions": {
+          "75a92ad3-20b0-4b59-bb51-b791630b3e51": {
+            "col": 1,
+            "row": 1,
+            "height": 3,
+            "width": 8
+          },
+          "f54bc9db-cdeb-4612-b634-448719ea8a63": {
+            "col": 9,
+            "row": 1,
+            "height": 3,
+            "width": 4
+          },
+          "83a04018-7628-4b06-8b04-e64e5389bf4d": {
+            "col": 1,
+            "row": 4,
+            "height": 4,
+            "width": 6
+          },
+          "c0c6b9d3-bc46-42b5-bf61-300cb3aab908": {
+            "col": 7,
+            "row": 4,
+            "height": 4,
+            "width": 6
+          },
+          "2d9aede7-f6a6-43c5-88e2-dd2fcfc54693": {
+            "col": 1,
+            "row": 8,
+            "height": 3,
+            "width": 4
+          },
+          "f40662ad-7b16-4c26-ac45-330bb13e6eb5": {
+            "col": 5,
+            "row": 8,
+            "height": 3,
+            "width": 4
+          },
+          "eb44ebcb-7ff6-4711-bbcb-c30a5a6ca64d": {
+            "col": 9,
+            "row": 8,
+            "height": 3,
+            "width": 4
+          },
+          "5fb1c151-677f-4cb4-999b-cb79b7d720b9": {
+            "col": 1,
+            "row": 11,
+            "height": 3,
+            "width": 8
+          },
+          "83dc8681-c9e9-429b-89fc-ef05e4fe4ae4": {
+            "col": 9,
+            "row": 11,
+            "height": 3,
+            "width": 4
+          },
+          "81db483c-ab10-4724-a4a2-c6513eaa1bf9": {
+            "col": 1,
+            "row": 14,
+            "height": 3,
+            "width": 12
+          },
+          "0ed3dc39-aa94-4080-86ba-58144c55569b": {
+            "col": 1,
+            "row": 17,
+            "height": 5,
+            "width": 12
+          }
+        },
+        "formatting": null,
+        "display_mode_settings": {
+          "positions": {}
+        }
+      }
+    },
+    "properties": [],
+    "requires": {},
+    "owner": "admin",
+    "created_at": "2026-06-02T14:30:00.000Z"
+  }
+}

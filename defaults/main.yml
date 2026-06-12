@@ -1,0 +1,26 @@
+# defaults/main.yml — dashboard_graylog role
+---
+# Graylog API credentials
+# vault_graylog_root_password must be provided via vault or host_vars
+graylog_root_username: admin
+graylog_api_url: "http://127.0.0.1:9000"
+
+# Set to true to delete + redeploy all managed dashboards
+graylog_dashboards_recreate: false
+
+# Dashboard definitions: title (idempotency key) + JSON filename in files/dashboards/
+graylog_dashboards:
+  - title: "Firewall GeoIP Dashboard"
+    file: "firewall-geoip.json"
+  - title: "BIND DNS Operations"
+    file: "dns-operations.json"
+  - title: "Web Traffic Dashboard"
+    file: "web-traffic.json"
+  - title: "Infrastructure (Proxmox) Dashboard"
+    file: "infrastructure.json"
+  - title: "K3s & Containers Dashboard"
+    file: "k3s.json"
+  - title: "Security & WAF Dashboard"
+    file: "security-waf.json"
+  - title: "Proxy & AV Security"
+    file: "proxy-security.json"

@@ -1,0 +1,42 @@
+# tasks/main.yml — dashboard_graylog role entry point
+# Tags: config
+---
+- name: Wait for Graylog API
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system"
+    method: GET
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+    status_code: 200
+  register: _gd_api_wait
+  retries: 3
+  delay: 5
+  until: _gd_api_wait.status == 200
+  tags: [config]
+
+- name: Get existing dashboards
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/dashboards"
+    method: GET
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Accept: application/json
+    return_content: true
+  register: _gd_existing
+  tags: [config]
+
+- name: Recreate dashboards (delete + redeploy)
+  ansible.builtin.include_tasks: recreate.yml
+  when: graylog_dashboards_recreate | bool
+  tags: [config]
+
+- name: Deploy missing dashboards
+  ansible.builtin.include_tasks: deploy.yml
+  when: not (graylog_dashboards_recreate | bool)
+  tags: [config]

@@ -1,0 +1,27 @@
+# tasks/recreate.yml — Delete matching dashboards then redeploy all
+---
+- name: Delete matching dashboards
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/views/{{ item.id }}"
+    method: DELETE
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+    status_code: [200, 204]
+  loop: >-
+    {{ _gd_existing.json.elements | default([])
+       | selectattr('title', 'in', graylog_dashboards | map(attribute='title'))
+       | list }}
+  loop_control:
+    label: "{{ item.title }}"
+  tags: [config]
+
+- name: Deploy all dashboards
+  ansible.builtin.include_tasks: _deploy_one.yml
+  loop: "{{ graylog_dashboards }}"
+  loop_control:
+    loop_var: _dashboard
+    label: "{{ _dashboard.title }}"
+  tags: [config]

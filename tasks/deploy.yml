@@ -1,0 +1,16 @@
+# tasks/deploy.yml — Idempotent deploy (skip existing dashboards)
+---
+- name: Set existing dashboard titles
+  ansible.builtin.set_fact:
+    _gd_existing_titles: >-
+      {{ _gd_existing.json.elements | default([]) | map(attribute='title') | list }}
+  tags: [config]
+
+- name: Deploy dashboards
+  ansible.builtin.include_tasks: _deploy_one.yml
+  loop: "{{ graylog_dashboards }}"
+  loop_control:
+    loop_var: _dashboard
+    label: "{{ _dashboard.title }}"
+  when: _dashboard.title not in _gd_existing_titles
+  tags: [config]

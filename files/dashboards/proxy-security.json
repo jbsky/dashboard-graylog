@@ -372,6 +372,45 @@
             ],
             "limit": 150,
             "offset": 0
+          },
+          {
+            "id": "262a34e3-8754-48d0-980a-4380fdfbd13b",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy OR source:clamav-icap"
+            },
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "streams": [],
+            "series": [
+              {
+                "type": "count",
+                "id": "0a031b14-e39f-4df8-ae96-1855df7db29e",
+                "field": null
+              }
+            ],
+            "rollup": true,
+            "row_groups": [
+              {
+                "type": "time",
+                "field": "timestamp",
+                "interval": {
+                  "type": "auto",
+                  "scaling": 1.0
+                }
+              }
+            ],
+            "column_groups": [
+              {
+                "type": "values",
+                "field": "source",
+                "limit": 5
+              }
+            ],
+            "sort": []
           }
         ]
       }
@@ -398,13 +437,81 @@
             "5fb1c151-677f-4cb4-999b-cb79b7d720b9": "ClamAV/ICAP Scan Activity",
             "83dc8681-c9e9-429b-89fc-ef05e4fe4ae4": "ICAP Response Codes",
             "81db483c-ab10-4724-a4a2-c6513eaa1bf9": "Blocked Device Activity (rm4-mini)",
-            "0ed3dc39-aa94-4080-86ba-58144c55569b": "Recent Proxy Logs"
+            "0ed3dc39-aa94-4080-86ba-58144c55569b": "Recent Proxy Logs",
+            "d6209c1d-07da-4056-8c81-8cdbe3c9fec2": "Traffic by Source"
           },
           "tab": {
             "title": "Proxy & AV"
           }
         },
         "widgets": [
+          {
+            "id": "d6209c1d-07da-4056-8c81-8cdbe3c9fec2",
+            "type": "aggregation",
+            "description": null,
+            "context": null,
+            "filter": null,
+            "filters": [],
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy OR source:clamav-icap"
+            },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": {
+              "type": "relative",
+              "range": 86400
+            },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": {
+                "barmode": "stack",
+                "axis_type": "linear",
+                "axis_config": null
+              },
+              "row_pivots": [
+                {
+                  "type": "time",
+                  "fields": [
+                    "timestamp"
+                  ],
+                  "config": {
+                    "interval": {
+                      "type": "auto",
+                      "scaling": 1.0
+                    }
+                  }
+                }
+              ],
+              "column_pivots": [
+                {
+                  "type": "values",
+                  "fields": [
+                    "source"
+                  ],
+                  "config": {
+                    "limit": 5
+                  }
+                }
+              ],
+              "series": [
+                {
+                  "function": "count()",
+                  "config": {
+                    "name": "Count",
+                    "thresholds": []
+                  }
+                }
+              ],
+              "sort": [],
+              "rollup": true,
+              "row_limit": null,
+              "column_limit": null,
+              "event_annotation": false,
+              "formatting_settings": null,
+              "units": {}
+            }
+          },
           {
             "id": "75a92ad3-20b0-4b59-bb51-b791630b3e51",
             "type": "aggregation",
@@ -1039,73 +1146,82 @@
           ],
           "0ed3dc39-aa94-4080-86ba-58144c55569b": [
             "c81e5141-6e7d-4918-98c7-d54100e33020"
+          ],
+          "d6209c1d-07da-4056-8c81-8cdbe3c9fec2": [
+            "262a34e3-8754-48d0-980a-4380fdfbd13b"
           ]
         },
         "positions": {
           "75a92ad3-20b0-4b59-bb51-b791630b3e51": {
             "col": 1,
-            "row": 1,
+            "row": 4,
             "height": 3,
             "width": 8
           },
           "f54bc9db-cdeb-4612-b634-448719ea8a63": {
             "col": 9,
-            "row": 1,
+            "row": 4,
             "height": 3,
             "width": 4
           },
           "83a04018-7628-4b06-8b04-e64e5389bf4d": {
             "col": 1,
-            "row": 4,
+            "row": 7,
             "height": 4,
             "width": 6
           },
           "c0c6b9d3-bc46-42b5-bf61-300cb3aab908": {
             "col": 7,
-            "row": 4,
+            "row": 7,
             "height": 4,
             "width": 6
           },
           "2d9aede7-f6a6-43c5-88e2-dd2fcfc54693": {
             "col": 1,
-            "row": 8,
+            "row": 11,
             "height": 3,
             "width": 4
           },
           "f40662ad-7b16-4c26-ac45-330bb13e6eb5": {
             "col": 5,
-            "row": 8,
+            "row": 11,
             "height": 3,
             "width": 4
           },
           "eb44ebcb-7ff6-4711-bbcb-c30a5a6ca64d": {
             "col": 9,
-            "row": 8,
+            "row": 11,
             "height": 3,
             "width": 4
           },
           "5fb1c151-677f-4cb4-999b-cb79b7d720b9": {
             "col": 1,
-            "row": 11,
+            "row": 14,
             "height": 3,
             "width": 8
           },
           "83dc8681-c9e9-429b-89fc-ef05e4fe4ae4": {
             "col": 9,
-            "row": 11,
+            "row": 14,
             "height": 3,
             "width": 4
           },
           "81db483c-ab10-4724-a4a2-c6513eaa1bf9": {
             "col": 1,
-            "row": 14,
+            "row": 17,
             "height": 3,
             "width": 12
           },
           "0ed3dc39-aa94-4080-86ba-58144c55569b": {
             "col": 1,
-            "row": 17,
+            "row": 20,
             "height": 5,
+            "width": 12
+          },
+          "d6209c1d-07da-4056-8c81-8cdbe3c9fec2": {
+            "col": 1,
+            "row": 1,
+            "height": 3,
             "width": 12
           }
         },

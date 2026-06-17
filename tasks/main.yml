@@ -17,6 +17,13 @@
   until: _gd_api_wait.status == 200
   tags: [config]
 
+# ── Pipelines (field extraction for dashboards) ───────────────
+- name: Deploy pipelines
+  ansible.builtin.include_tasks: pipelines.yml
+  when: graylog_pipelines_manage | bool
+  tags: [config]
+
+# ── Dashboards ────────────────────────────────────────────────
 - name: Get existing dashboards
   ansible.builtin.uri:
     url: "{{ graylog_api_url }}/api/dashboards"

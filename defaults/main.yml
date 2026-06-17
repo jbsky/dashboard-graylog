@@ -24,3 +24,233 @@ graylog_dashboards:
     file: "security-waf.json"
   - title: "Proxy & AV Security"
     file: "proxy-security.json"
+
+# ══════════════════════════════════════════════════════════════
+# Pipeline management — field extraction for dashboards
+# ══════════════════════════════════════════════════════════════
+graylog_pipelines_manage: true
+
+# Titles used for Default Stream connection (all must exist as pipelines)
+graylog_pipeline_titles:
+  - "Firewall Log Processing"
+  - "DNS Log Processing"
+  - "Web Log Processing"
+  - "Proxy Log Processing"
+
+# ── Pipeline (Firewall Log Processing) ───────────────────────
+graylog_pipeline_source: |
+  pipeline "Firewall Log Processing"
+  stage 0 match either
+    rule "Extract Firewall Fields"
+  end
+
+graylog_pipeline_rule_source: |
+  rule "Extract Firewall Fields"
+  when
+    has_field("message") AND contains(to_string($message.message), " SRC=") AND contains(to_string($message.message), " PROTO=")
+  then
+    let msg = to_string($message.message);
+
+    // === Field extraction ===
+    let src = regex("SRC=(\\S+)", msg);
+    let dst = regex("DST=(\\S+)", msg);
+    let src_ip = to_string(src["0"]);
+    let dst_ip = to_string(dst["0"]);
+    set_field("source_ip", src_ip);
+    set_field("destination_ip", dst_ip);
+
+    let iface = regex("IN=(\\S+)", msg);
+    set_field("inbound_interface", to_string(iface["0"]));
+
+    let proto = regex("PROTO=(\\S+)", msg);
+    set_field("network_protocol", to_string(proto["0"]));
+
+    let fw = regex("\\[([^\\]]+)\\]", msg);
+    set_field("fw_rule", to_string(fw["0"]));
+
+    // Ports (TCP/UDP only — ICMP has no ports)
+    let dpt = regex("DPT=(\\d+)", msg);
+    set_field("destination_port", to_long(dpt["0"]));
+    let spt = regex("SPT=(\\d+)", msg);
+    set_field("source_port", to_long(spt["0"]));
+
+    // === GeoIP enrichment via lookup tables ===
+    let city = lookup("geoip-city", src_ip);
+    set_field("src_geolocation", to_string(city["coordinates"]));
+    // Extract country ISO code from Country Java object
+    let country_str = to_string(city["country"]);
+    let country_match = regex("isoCode=(\\w+)", country_str);
+    set_field("src_country", to_string(country_match["0"]));
+    // Extract city name (English) from City Java object
+    let city_str = to_string(city["city"]);
+    let city_match = regex("en=([^,}]+)", city_str);
+    set_field("src_city", to_string(city_match["0"]));
+
+    // ASN enrichment
+    let asn = lookup("geoip-asn", src_ip);
+    set_field("src_as_org", to_string(asn["as_organization"]));
+    set_field("src_as_number", to_long(asn["as_number"]));
+  end
+
+# ── Pipeline (DNS Log Processing) ─────────────────────────────
+graylog_dns_pipeline_source: |
+  pipeline "DNS Log Processing"
+  stage 0 match either
+    rule "Extract DNS Fields"
+  end
+
+graylog_dns_pipeline_rule_source: |
+  rule "Extract DNS Fields"
+  when
+    has_field("message") AND contains(to_string($message.message), "bind9[") AND contains(to_string($message.message), "query")
+  then
+    let msg = to_string($message.message);
+
+    // === Common prefix: client @ADDR IP#PORT (DOMAIN): view VIEW: ===
+    let prefix = regex("client\\s+@\\S+\\s+(\\S+)#(\\d+)\\s+\\(([^)]+)\\):\\s+view\\s+(\\S+):", msg);
+    let client_ip = to_string(prefix["0"]);
+    set_field("dns_client_ip", client_ip);
+    set_field("dns_client_port", to_long(prefix["1"]));
+    set_field("dns_domain", to_string(prefix["2"]));
+    set_field("dns_view", to_string(prefix["3"]));
+
+    // === Query type: normal "query: DOMAIN IN TYPE" or failed "for DOMAIN/IN/TYPE at" ===
+    let qtype_normal = regex("query:\\s+\\S+\\s+IN\\s+(\\S+)", msg);
+    let qtype_failed = regex("/IN/(\\S+)\\s+at", msg);
+    let qt = to_string(qtype_normal["0"]);
+    let qt_final = regex_replace("^$", qt, to_string(qtype_failed["0"]));
+    set_field("dns_query_type", qt_final);
+
+    // === Status: SUCCESS or REFUSED/SERVFAIL ===
+    let failed = regex("query failed \\((\\w+)\\)", msg);
+    let fail_status = to_string(failed["0"]);
+    set_field("dns_status", regex_replace("^$", fail_status, "SUCCESS"));
+
+    // === GeoIP enrichment (private IPs return empty = no-op) ===
+    let city = lookup("geoip-city", client_ip);
+    set_field("dns_geolocation", to_string(city["coordinates"]));
+    let country_str = to_string(city["country"]);
+    let country_match = regex("isoCode=(\\w+)", country_str);
+    set_field("dns_country", to_string(country_match["0"]));
+    let city_str = to_string(city["city"]);
+    let city_match = regex("en=([^,}]+)", city_str);
+    set_field("dns_city", to_string(city_match["0"]));
+
+    let asn = lookup("geoip-asn", client_ip);
+    set_field("dns_as_org", to_string(asn["as_organization"]));
+    set_field("dns_as_number", to_long(asn["as_number"]));
+  end
+
+# ── Pipeline (Web Log Processing) ─────────────────────────────
+graylog_web_pipeline_source: |
+  pipeline "Web Log Processing"
+  stage 0 match either
+    rule "Extract Web Fields"
+  end
+
+graylog_web_pipeline_rule_source: |
+  rule "Extract Web Fields"
+  when
+    has_field("message") AND
+    (contains(to_string($message.source), "traefik") OR
+     contains(to_string($message.source), "haproxy") OR
+     contains(to_string($message.source), "nginx"))
+  then
+    let msg = to_string($message.message);
+    let src = to_string($message.source);
+
+    // --- Traefik CLF: IP - - [date] "METHOD URL HTTP/x.x" STATUS SIZE ...
+    let traefik = regex("^(\\S+)\\s+\\S+\\s+\\S+\\s+\\[[^\\]]+\\]\\s+\"(\\w+)\\s+(\\S+)\\s+HTTP/[^\"]+\"\\s+(\\d+)\\s+(\\d+)", msg);
+
+    // --- HAProxy: ... timers STATUS SIZE ...  "METHOD URL HTTP/x.x"
+    let haproxy = regex("\\d+/\\d+/\\d+/\\d+/\\d+\\s+(\\d+)\\s+(\\d+)\\s+.*\"(\\w+)\\s+(\\S+)\\s+HTTP/", msg);
+
+    // --- nginx custom: ... "METHOD URL HTTP/x.x" STATUS SIZE
+    let nginx = regex("\"(\\w+)\\s+(\\S+)\\s+HTTP/[^\"]+\"\\s+(\\d+)\\s+(\\d+)", msg);
+
+    // Apply first matching format
+    let method = "";
+    let url = "";
+    let status = "";
+    let size = "";
+
+    // Traefik
+    let t_method = to_string(traefik["1"]);
+    let t_url = to_string(traefik["2"]);
+    let t_status = to_string(traefik["3"]);
+    let t_size = to_string(traefik["4"]);
+
+    // HAProxy (different capture group order: status, size, method, url)
+    let h_status = to_string(haproxy["0"]);
+    let h_size = to_string(haproxy["1"]);
+    let h_method = to_string(haproxy["2"]);
+    let h_url = to_string(haproxy["3"]);
+
+    // nginx (method, url, status, size)
+    let n_method = to_string(nginx["0"]);
+    let n_url = to_string(nginx["1"]);
+    let n_status = to_string(nginx["2"]);
+    let n_size = to_string(nginx["3"]);
+
+    // Priority: traefik > haproxy > nginx (first non-empty wins)
+    let final_method = regex_replace("^$", regex_replace("^$", t_method, h_method), n_method);
+    let final_url = regex_replace("^$", regex_replace("^$", t_url, h_url), n_url);
+    let final_status = regex_replace("^$", regex_replace("^$", t_status, h_status), n_status);
+    let final_size = regex_replace("^$", regex_replace("^$", t_size, h_size), n_size);
+
+    set_field("http_method", final_method);
+    set_field("http_url", final_url);
+    set_field("http_status", to_long(final_status));
+    set_field("http_response_size", to_long(final_size));
+
+    // Client IP (traefik first field, haproxy IP:port before date)
+    let traefik_ip = to_string(traefik["0"]);
+    let haproxy_ip = regex("(\\d+\\.\\d+\\.\\d+\\.\\d+):\\d+\\s+\\[", msg);
+    let h_ip = to_string(haproxy_ip["0"]);
+    let final_ip = regex_replace("^$", traefik_ip, h_ip);
+    set_field("http_client_ip", final_ip);
+  end
+
+# ── Pipeline (Proxy Log Processing) ──────────────────────────
+graylog_proxy_pipeline_source: |
+  pipeline "Proxy Log Processing"
+  stage 0 match either
+    rule "Set Proxy Source"
+    rule "Extract Squid Fields"
+  end
+
+graylog_proxy_pipeline_rule_rename: |
+  rule "Set Proxy Source"
+  when
+    has_field("source") AND to_string($message.source) == "vyos" AND
+    (contains(to_string($message.message), "c-icap[") OR
+     contains(to_string($message.message), "clamav["))
+  then
+    set_field("source", "clamav-icap");
+
+    // Extract ICAP fields from c-icap access log format:
+    // HOSTNAME c-icap[PID]: TIMESTAMP, SRC DST REQMOD|RESPMOD service CODE
+    let msg = to_string($message.message);
+    let icap = regex("(REQMOD|RESPMOD)\\s+\\S+\\s+(\\d+)", msg);
+    let mode = to_string(icap["0"]);
+    let code = to_string(icap["1"]);
+    set_field("icap_mode", mode);
+    set_field("icap_response_code", to_long(code));
+  end
+
+graylog_proxy_pipeline_rule_squid: |
+  rule "Extract Squid Fields"
+  when
+    has_field("source") AND to_string($message.source) == "webproxy"
+  then
+    // Squid syslog_multi format (after syslog header stripping):
+    // EPOCH.MS RTIME CLIENT STATUS/HTTP_CODE SIZE METHOD URL USER HIER/PEER MIME SNI BUMP_MODE
+    let msg = to_string($message.message);
+    let squid = regex("\\S+\\s+\\d+\\s+(\\S+)\\s+(\\w+)/(\\d+)\\s+\\d+\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\S+/\\S+\\s+\\S+\\s+(\\S+)\\s+(\\S+)", msg);
+
+    set_field("squid_client_ip", to_string(squid["0"]));
+    set_field("squid_status", to_string(squid["1"]));
+    set_field("squid_http_code", to_long(squid["2"]));
+    set_field("squid_sni", to_string(squid["3"]));
+    set_field("squid_bump_mode", to_string(squid["4"]));
+  end

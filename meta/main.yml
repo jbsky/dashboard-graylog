@@ -21,6 +21,7 @@ galaxy_info:
   galaxy_tags:
     - graylog
     - dashboard
+    - pipeline
     - monitoring
     - logging
     - observability

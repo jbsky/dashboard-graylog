@@ -1,0 +1,476 @@
+# tasks/pipelines.yml — Graylog pipeline management (Firewall + DNS + Web + Proxy)
+# Deploys pipeline rules that extract fields required by the dashboards.
+# Requires: GeoIP lookup tables already created (from graylog server role)
+---
+# ── Fetch current state ───────────────────────────────────────
+- name: Get existing pipelines
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: GET
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+    return_content: true
+  register: _pipelines
+  tags: [config]
+
+- name: Get existing rules
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: GET
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+    return_content: true
+  register: _existing_rules
+  tags: [config]
+
+# ── Firewall Pipeline ─────────────────────────────────────────
+- name: Create Firewall pipeline
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Firewall Log Processing"
+      description: "VyOS FW field extraction + GeoIP via lookup tables"
+      source: "{{ graylog_pipeline_source }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _fw_pipeline_created
+  when: _pipelines.json | selectattr('title', 'equalto', 'Firewall Log Processing') | list | length == 0
+  tags: [config]
+
+- name: Update Firewall pipeline source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline/{{ (_pipelines.json | selectattr('title', 'equalto', 'Firewall Log Processing') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _pipelines.json | selectattr('title', 'equalto', 'Firewall Log Processing') | map(attribute='id') | first }}"
+      title: "Firewall Log Processing"
+      description: "VyOS FW field extraction + GeoIP via lookup tables"
+      source: "{{ graylog_pipeline_source }}"
+    status_code: [200, 201]
+  when: _pipelines.json | selectattr('title', 'equalto', 'Firewall Log Processing') | list | length > 0
+  tags: [config]
+
+- name: Create Firewall rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Extract Firewall Fields"
+      description: "Parse iptables fields + ports + GeoIP enrichment via lookup tables"
+      source: "{{ graylog_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Firewall Fields') | list | length == 0
+  tags: [config]
+
+- name: Update Firewall rule source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule/{{ (_existing_rules.json | selectattr('title', 'equalto', 'Extract Firewall Fields') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _existing_rules.json | selectattr('title', 'equalto', 'Extract Firewall Fields') | map(attribute='id') | first }}"
+      title: "Extract Firewall Fields"
+      description: "Parse iptables fields + ports + GeoIP enrichment via lookup tables"
+      source: "{{ graylog_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Firewall Fields') | list | length > 0
+  tags: [config]
+
+# ── DNS Pipeline ──────────────────────────────────────────────
+- name: Create DNS pipeline
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "DNS Log Processing"
+      description: "BIND9 query field extraction + GeoIP via lookup tables"
+      source: "{{ graylog_dns_pipeline_source }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _dns_pipeline_created
+  when: _pipelines.json | selectattr('title', 'equalto', 'DNS Log Processing') | list | length == 0
+  tags: [config]
+
+- name: Update DNS pipeline source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline/{{ (_pipelines.json | selectattr('title', 'equalto', 'DNS Log Processing') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _pipelines.json | selectattr('title', 'equalto', 'DNS Log Processing') | map(attribute='id') | first }}"
+      title: "DNS Log Processing"
+      description: "BIND9 query field extraction + GeoIP via lookup tables"
+      source: "{{ graylog_dns_pipeline_source }}"
+    status_code: [200, 201]
+  when: _pipelines.json | selectattr('title', 'equalto', 'DNS Log Processing') | list | length > 0
+  tags: [config]
+
+- name: Create DNS rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Extract DNS Fields"
+      description: "Parse BIND9 query logs: client IP, domain, type, view, status + GeoIP"
+      source: "{{ graylog_dns_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract DNS Fields') | list | length == 0
+  tags: [config]
+
+- name: Update DNS rule source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule/{{ (_existing_rules.json | selectattr('title', 'equalto', 'Extract DNS Fields') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _existing_rules.json | selectattr('title', 'equalto', 'Extract DNS Fields') | map(attribute='id') | first }}"
+      title: "Extract DNS Fields"
+      description: "Parse BIND9 query logs: client IP, domain, type, view, status + GeoIP"
+      source: "{{ graylog_dns_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract DNS Fields') | list | length > 0
+  tags: [config]
+
+# ── Web Pipeline ──────────────────────────────────────────────
+- name: Create Web pipeline
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Web Log Processing"
+      description: "HTTP field extraction from traefik, haproxy, nginx access logs"
+      source: "{{ graylog_web_pipeline_source }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _web_pipeline_created
+  when: _pipelines.json | selectattr('title', 'equalto', 'Web Log Processing') | list | length == 0
+  tags: [config]
+
+- name: Update Web pipeline source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline/{{ (_pipelines.json | selectattr('title', 'equalto', 'Web Log Processing') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _pipelines.json | selectattr('title', 'equalto', 'Web Log Processing') | map(attribute='id') | first }}"
+      title: "Web Log Processing"
+      description: "HTTP field extraction from traefik, haproxy, nginx access logs"
+      source: "{{ graylog_web_pipeline_source }}"
+    status_code: [200, 201]
+  when: _pipelines.json | selectattr('title', 'equalto', 'Web Log Processing') | list | length > 0
+  tags: [config]
+
+- name: Create Web rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Extract Web Fields"
+      description: "Parse HTTP method, URL, status, size from traefik/haproxy/nginx logs"
+      source: "{{ graylog_web_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Web Fields') | list | length == 0
+  tags: [config]
+
+- name: Update Web rule source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule/{{ (_existing_rules.json | selectattr('title', 'equalto', 'Extract Web Fields') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _existing_rules.json | selectattr('title', 'equalto', 'Extract Web Fields') | map(attribute='id') | first }}"
+      title: "Extract Web Fields"
+      description: "Parse HTTP method, URL, status, size from traefik/haproxy/nginx logs"
+      source: "{{ graylog_web_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Web Fields') | list | length > 0
+  tags: [config]
+
+# ── Proxy Pipeline ────────────────────────────────────────────
+- name: Create Proxy pipeline
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Proxy Log Processing"
+      description: "Squid proxy field extraction + c-icap/ClamAV source renaming"
+      source: "{{ graylog_proxy_pipeline_source }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _proxy_pipeline_created
+  when: _pipelines.json | selectattr('title', 'equalto', 'Proxy Log Processing') | list | length == 0
+  tags: [config]
+
+- name: Update Proxy pipeline source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline/{{ (_pipelines.json | selectattr('title', 'equalto', 'Proxy Log Processing') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _pipelines.json | selectattr('title', 'equalto', 'Proxy Log Processing') | map(attribute='id') | first }}"
+      title: "Proxy Log Processing"
+      description: "Squid proxy field extraction + c-icap/ClamAV source renaming"
+      source: "{{ graylog_proxy_pipeline_source }}"
+    status_code: [200, 201]
+  when: _pipelines.json | selectattr('title', 'equalto', 'Proxy Log Processing') | list | length > 0
+  tags: [config]
+
+- name: Create Proxy source rename rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Set Proxy Source"
+      description: "Rename source for c-icap/ClamAV logs + extract ICAP fields"
+      source: "{{ graylog_proxy_pipeline_rule_rename }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Set Proxy Source') | list | length == 0
+  tags: [config]
+
+- name: Update Proxy source rename rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule/{{ (_existing_rules.json | selectattr('title', 'equalto', 'Set Proxy Source') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _existing_rules.json | selectattr('title', 'equalto', 'Set Proxy Source') | map(attribute='id') | first }}"
+      title: "Set Proxy Source"
+      description: "Rename source for c-icap/ClamAV logs + extract ICAP fields"
+      source: "{{ graylog_proxy_pipeline_rule_rename }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Set Proxy Source') | list | length > 0
+  tags: [config]
+
+- name: Create Proxy squid extraction rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Extract Squid Fields"
+      description: "Parse Squid access log: client IP, status, HTTP code, SNI, bump mode"
+      source: "{{ graylog_proxy_pipeline_rule_squid }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Squid Fields') | list | length == 0
+  tags: [config]
+
+- name: Update Proxy squid extraction rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule/{{ (_existing_rules.json | selectattr('title', 'equalto', 'Extract Squid Fields') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _existing_rules.json | selectattr('title', 'equalto', 'Extract Squid Fields') | map(attribute='id') | first }}"
+      title: "Extract Squid Fields"
+      description: "Parse Squid access log: client IP, status, HTTP code, SNI, bump mode"
+      source: "{{ graylog_proxy_pipeline_rule_squid }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Squid Fields') | list | length > 0
+  tags: [config]
+
+# ── Connect all pipelines to Default Stream ───────────────────
+- name: Refresh pipeline list
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: GET
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+    return_content: true
+  register: _pipelines_final
+  tags: [config]
+
+- name: Collect all pipeline IDs
+  ansible.builtin.set_fact:
+    _all_pipeline_ids: >-
+      {{ _pipelines_final.json
+         | selectattr('title', 'in', graylog_pipeline_titles)
+         | map(attribute='id') | list }}
+  tags: [config]
+
+- name: Get stream connections
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/connections"
+    method: GET
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+    return_content: true
+  register: _connections
+  tags: [config]
+
+- name: Connect pipelines to Default Stream
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/connections/to_stream"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      stream_id: "000000000000000000000001"
+      pipeline_ids: "{{ _all_pipeline_ids }}"
+    status_code: [200, 201]
+  when: >-
+    (_connections.json
+     | selectattr('stream_id', 'defined')
+     | selectattr('stream_id', 'equalto', '000000000000000000000001')
+     | map(attribute='pipeline_ids') | first | default([])
+     | sort) != (_all_pipeline_ids | sort)
+  tags: [config]
+
+# ── Message processor order ───────────────────────────────────
+- name: Configure message processor order (Pipeline before Stream Rules)
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/messageprocessors/config"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      disabled_processors:
+        - "org.graylog.plugins.map.geoip.processor.GeoIpProcessor"
+      processor_order:
+        - class_name: "org.graylog2.messageprocessors.MessageFilterChainProcessor"
+          name: "Message Filter Chain"
+        - class_name: "org.graylog.plugins.pipelineprocessor.processors.PipelineInterpreter"
+          name: "Pipeline Processor"
+        - class_name: "org.graylog2.messageprocessors.StreamMatcherFilterProcessor"
+          name: "Stream Rule Processor"
+    status_code: [200]
+  tags: [config]

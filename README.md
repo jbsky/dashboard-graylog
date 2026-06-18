@@ -29,7 +29,58 @@ Ansible role to deploy and manage Graylog dashboards and their supporting field-
 | Firewall Log Processing | Extract Firewall Fields | `source_ip`, `destination_ip`, `network_protocol`, `fw_rule`, `destination_port`, `source_port`, `src_geolocation`, `src_country`, `src_city`, `src_as_org` |
 | DNS Log Processing | Extract DNS Fields | `dns_client_ip`, `dns_domain`, `dns_view`, `dns_query_type`, `dns_status`, `dns_geolocation`, `dns_country` |
 | Web Log Processing | Extract Web Fields | `http_method`, `http_url`, `http_status`, `http_response_size`, `http_client_ip` |
-| Proxy Log Processing | Set Proxy Source, Extract Squid Fields | `squid_client_ip`, `squid_status`, `squid_http_code`, `squid_sni`, `squid_bump_mode`, `icap_mode`, `icap_response_code` |
+| Proxy Log Processing | Set Proxy Source, Extract Squid Fields | `squid_client_ip`, `squid_status`, `squid_http_code`, `squid_bytes`, `squid_method`, `squid_url`, `squid_sni`, `squid_bump_mode`, `squid_port`, `icap_mode`, `icap_response_code` |
+
+## Expected Log Formats
+
+The pipelines expect specific log formats from each source. If the format doesn't match, field extraction will silently produce empty values.
+
+### Squid (Proxy Log Processing)
+
+```
+# squid.conf — local log
+logformat squid_multi %ts.%03tu %6tr %>a %Ss/%03>Hs %<st %rm %ru %[un %Sh/%<a %mt %ssl::>sni %ssl::bump_mode %>lp
+
+# squid.conf — syslog towards Graylog (RFC3164 with custom header)
+logformat syslog_multi <14>%{%b %d %H:%M:%S}tl webproxy squid[0]: %ts.%03tu %6tr %>a %Ss/%03>Hs %<st %rm %ru %[un %Sh/%<a %mt %ssl::>sni %ssl::bump_mode %>lp
+
+access_log udp://<graylog_ip>:514 syslog_multi
+access_log stdio:/var/log/squid/access.log squid_multi
+```
+
+Fields in order: `EPOCH.MS RESPONSE_TIME CLIENT_IP STATUS/HTTP_CODE BYTES METHOD URL USERNAME HIERARCHY/PEER MIME_TYPE SNI BUMP_MODE LISTEN_PORT`
+
+Listening ports: `3128` (explicit HTTP), `3129` (transparent HTTP), `3130` (explicit SSL Bump), `3131` (transparent HTTPS)
+
+### c-icap / ClamAV (Set Proxy Source)
+
+c-icap access logs forwarded via VyOS rsyslog (`source:vyos`, matched by `c-icap[` or `clamav[` in message). The pipeline renames `source` to `clamav-icap` and extracts ICAP fields.
+
+```
+# ICAP access log format (in message body):
+# HOSTNAME c-icap[PID]: TIMESTAMP, SRC DST REQMOD|RESPMOD service CODE
+```
+
+### Firewall (Firewall Log Processing)
+
+VyOS iptables/nftables log messages containing `SRC=` and `PROTO=` keywords (standard netfilter log format).
+
+### DNS (DNS Log Processing)
+
+BIND9 query log format with named views:
+```
+client @0xHEX IP#PORT (DOMAIN): view VIEWNAME: query: DOMAIN IN TYPE +flags
+```
+
+### Web (Web Log Processing)
+
+Three formats supported (auto-detected by source name):
+
+```
+# Traefik (CLF): IP - - [date] "METHOD URL HTTP/x.x" STATUS SIZE ...
+# HAProxy: ... timers STATUS SIZE ... "METHOD URL HTTP/x.x"
+# nginx: ... "METHOD URL HTTP/x.x" STATUS SIZE
+```
 
 ## Requirements
 

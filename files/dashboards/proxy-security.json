@@ -17,12 +17,9 @@
         },
         "search_types": [
           {
-            "id": "st-01-traffic-source",
+            "id": "st-01",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy OR source:clamav-icap"
-            },
+            "query": { "type": "elasticsearch", "query_string": "source:webproxy OR source:clamav-icap" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
             "series": [{ "type": "count", "id": "s-01", "field": null }],
@@ -32,12 +29,9 @@
             "sort": []
           },
           {
-            "id": "st-02-traffic-port",
+            "id": "st-02",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND _exists_:squid_port"
-            },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_port" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
             "series": [{ "type": "count", "id": "s-02", "field": null }],
@@ -47,12 +41,9 @@
             "sort": []
           },
           {
-            "id": "st-03-status-pie",
+            "id": "st-03",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy"
-            },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_status" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
             "series": [{ "type": "count", "id": "s-03", "field": null }],
@@ -62,183 +53,141 @@
             "sort": []
           },
           {
-            "id": "st-04-iot-allowed",
+            "id": "st-04",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND squid_port:(3129 OR 3131) AND NOT squid_bump_mode:terminate AND NOT squid_status:TCP_DENIED"
-            },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_client_ip" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
-            "series": [
-              { "type": "count", "id": "s-04a", "field": null },
-              { "type": "sum", "id": "s-04b", "field": "squid_bytes" }
-            ],
+            "series": [{ "type": "count", "id": "s-04", "field": null }],
             "rollup": true,
-            "row_groups": [{ "type": "values", "field": "squid_sni", "limit": 20 }],
+            "row_groups": [{ "type": "values", "field": "squid_client_ip", "limit": 15 }],
             "column_groups": [],
             "sort": []
           },
           {
-            "id": "st-05-iot-blocked",
+            "id": "st-05",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND squid_port:(3129 OR 3131) AND (squid_bump_mode:terminate OR squid_status:TCP_DENIED)"
-            },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_http_code" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
             "series": [{ "type": "count", "id": "s-05", "field": null }],
             "rollup": true,
-            "row_groups": [
-              { "type": "values", "field": "squid_client_ip", "limit": 15 },
-              { "type": "values", "field": "squid_sni", "limit": 15 }
-            ],
+            "row_groups": [{ "type": "values", "field": "squid_http_code", "limit": 10 }],
             "column_groups": [],
             "sort": []
           },
           {
-            "id": "st-06-explicit-urls",
+            "id": "st-06",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND squid_port:3128"
-            },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_sni AND NOT squid_sni:\"-\"" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
             "series": [{ "type": "count", "id": "s-06", "field": null }],
-            "rollup": true,
-            "row_groups": [{ "type": "values", "field": "squid_url", "limit": 20 }],
-            "column_groups": [],
-            "sort": []
-          },
-          {
-            "id": "st-07-bump-domains",
-            "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND squid_port:3130 AND squid_bump_mode:bump"
-            },
-            "timerange": { "type": "relative", "range": 86400 },
-            "streams": [],
-            "series": [
-              { "type": "count", "id": "s-07a", "field": null },
-              { "type": "sum", "id": "s-07b", "field": "squid_bytes" }
-            ],
             "rollup": true,
             "row_groups": [{ "type": "values", "field": "squid_sni", "limit": 20 }],
             "column_groups": [],
             "sort": []
           },
           {
-            "id": "st-08-bump-mode-pie",
+            "id": "st-07",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND NOT squid_bump_mode:\"-\""
-            },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_bump_mode AND NOT squid_bump_mode:\"-\"" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
-            "series": [{ "type": "count", "id": "s-08", "field": null }],
+            "series": [{ "type": "count", "id": "s-07", "field": null }],
             "rollup": true,
             "row_groups": [{ "type": "values", "field": "squid_bump_mode", "limit": 5 }],
             "column_groups": [],
             "sort": []
           },
           {
-            "id": "st-09-icap-activity",
+            "id": "st-08",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:clamav-icap"
-            },
+            "query": { "type": "elasticsearch", "query_string": "squid_port:(80 OR 443) AND NOT squid_bump_mode:terminate AND NOT squid_status:TCP_DENIED AND NOT squid_sni:\"-\"" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
-            "series": [{ "type": "count", "id": "s-09", "field": null }],
-            "rollup": true,
-            "row_groups": [{ "type": "time", "field": "timestamp", "interval": { "type": "auto", "scaling": 1.0 } }],
-            "column_groups": [{ "type": "values", "field": "icap_mode", "limit": 3 }],
-            "sort": []
-          },
-          {
-            "id": "st-10-icap-codes",
-            "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:clamav-icap"
-            },
-            "timerange": { "type": "relative", "range": 86400 },
-            "streams": [],
-            "series": [{ "type": "count", "id": "s-10", "field": null }],
-            "rollup": true,
-            "row_groups": [{ "type": "values", "field": "icap_response_code", "limit": 5 }],
-            "column_groups": [],
-            "sort": []
-          },
-          {
-            "id": "st-11-top-domains",
-            "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND NOT squid_sni:\"-\""
-            },
-            "timerange": { "type": "relative", "range": 86400 },
-            "streams": [],
-            "series": [
-              { "type": "count", "id": "s-11a", "field": null },
-              { "type": "sum", "id": "s-11b", "field": "squid_bytes" }
-            ],
+            "series": [{ "type": "count", "id": "s-08", "field": null }],
             "rollup": true,
             "row_groups": [{ "type": "values", "field": "squid_sni", "limit": 20 }],
             "column_groups": [],
             "sort": []
           },
           {
-            "id": "st-12-denied",
+            "id": "st-09",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy AND (squid_status:TCP_DENIED OR squid_bump_mode:terminate OR squid_http_code:403)"
-            },
+            "query": { "type": "elasticsearch", "query_string": "squid_port:(80 OR 443) AND (squid_bump_mode:terminate OR squid_status:TCP_DENIED)" },
+            "timerange": { "type": "relative", "range": 86400 },
+            "streams": [],
+            "series": [{ "type": "count", "id": "s-09", "field": null }],
+            "rollup": true,
+            "row_groups": [{ "type": "values", "field": "squid_sni", "limit": 15 }],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "st-10",
+            "type": "pivot",
+            "query": { "type": "elasticsearch", "query_string": "squid_port:3128 AND _exists_:squid_url" },
+            "timerange": { "type": "relative", "range": 86400 },
+            "streams": [],
+            "series": [{ "type": "count", "id": "s-10", "field": null }],
+            "rollup": true,
+            "row_groups": [{ "type": "values", "field": "squid_url", "limit": 20 }],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "st-11",
+            "type": "pivot",
+            "query": { "type": "elasticsearch", "query_string": "squid_port:3130 AND NOT squid_sni:\"-\"" },
+            "timerange": { "type": "relative", "range": 86400 },
+            "streams": [],
+            "series": [{ "type": "count", "id": "s-11", "field": null }],
+            "rollup": true,
+            "row_groups": [{ "type": "values", "field": "squid_sni", "limit": 20 }],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "st-12",
+            "type": "pivot",
+            "query": { "type": "elasticsearch", "query_string": "source:clamav-icap" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
             "series": [{ "type": "count", "id": "s-12", "field": null }],
             "rollup": true,
-            "row_groups": [
-              { "type": "values", "field": "squid_client_ip", "limit": 15 },
-              { "type": "values", "field": "squid_sni", "limit": 15 }
-            ],
-            "column_groups": [],
+            "row_groups": [{ "type": "time", "field": "timestamp", "interval": { "type": "auto", "scaling": 1.0 } }],
+            "column_groups": [{ "type": "values", "field": "icap_mode", "limit": 3 }],
             "sort": []
           },
           {
-            "id": "st-14-top-clients",
+            "id": "st-13",
             "type": "pivot",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy"
-            },
+            "query": { "type": "elasticsearch", "query_string": "source:clamav-icap AND _exists_:icap_response_code" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
-            "series": [
-              { "type": "count", "id": "s-14a", "field": null },
-              { "type": "sum", "id": "s-14b", "field": "squid_bytes" }
-            ],
+            "series": [{ "type": "count", "id": "s-13", "field": null }],
             "rollup": true,
-            "row_groups": [
-              { "type": "values", "field": "squid_client_ip", "limit": 15 },
-              { "type": "values", "field": "squid_sni", "limit": 10 }
-            ],
+            "row_groups": [{ "type": "values", "field": "icap_response_code", "limit": 5 }],
             "column_groups": [],
             "sort": []
           },
           {
-            "id": "st-13-messages",
+            "id": "st-14",
+            "type": "pivot",
+            "query": { "type": "elasticsearch", "query_string": "squid_status:TCP_DENIED OR squid_bump_mode:terminate OR squid_http_code:403" },
+            "timerange": { "type": "relative", "range": 86400 },
+            "streams": [],
+            "series": [{ "type": "count", "id": "s-14", "field": null }],
+            "rollup": true,
+            "row_groups": [{ "type": "values", "field": "squid_sni", "limit": 15 }],
+            "column_groups": [],
+            "sort": []
+          },
+          {
+            "id": "st-15",
             "type": "messages",
-            "query": {
-              "type": "elasticsearch",
-              "query_string": "source:webproxy OR source:clamav-icap"
-            },
+            "query": { "type": "elasticsearch", "query_string": "source:webproxy OR source:clamav-icap" },
             "timerange": { "type": "relative", "range": 86400 },
             "streams": [],
             "sort": [{ "field": "timestamp", "order": "DESC" }],
@@ -252,28 +201,29 @@
   "dashboard": {
     "type": "DASHBOARD",
     "title": "Proxy & AV Security",
-    "summary": "Squid multi-mode proxy (explicit + transparent IoT) + ClamAV/c-icap antivirus",
-    "description": "4 proxy modes: explicit HTTP (3128), transparent HTTP IoT (3129), explicit SSL Bump (3130), transparent HTTPS IoT (3131). ClamAV ICAP scanning on all modes.",
+    "summary": "Squid multi-mode proxy (explicit + transparent IoT) + ClamAV/c-icap antivirus scanning",
+    "description": "4 proxy modes: explicit HTTP (3128), explicit SSL Bump (3130), transparent HTTP IoT (port 80), transparent HTTPS IoT (port 443). ClamAV ICAP scanning on all modes.",
     "state": {
       "84e209eb-2628-4224-a050-fb039df59cf7": {
         "selected_fields": null,
         "static_message_list_id": null,
         "titles": {
           "widget": {
-            "w-01": "Traffic by Source",
+            "w-01": "Proxy Traffic Over Time",
             "w-02": "Traffic by Port",
-            "w-03": "Status Distribution",
-            "w-04": "IoT Transparent — Allowed Domains",
-            "w-05": "IoT Transparent — Blocked",
-            "w-06": "Explicit HTTP — Top URLs",
-            "w-07": "SSL Bump — Top Domains",
-            "w-08": "Bump Mode Distribution",
-            "w-09": "ClamAV/ICAP Scan Activity",
-            "w-10": "ICAP Response Codes",
-            "w-11": "Top Domains (all)",
-            "w-12": "Denied / Terminated",
-            "w-13": "Recent Proxy Logs",
-            "w-14": "Top Clients"
+            "w-03": "Cache Status Distribution",
+            "w-04": "Top Clients",
+            "w-05": "HTTP Response Codes",
+            "w-06": "Top Domains",
+            "w-07": "Bump Mode Distribution",
+            "w-08": "IoT Transparent — Allowed Domains",
+            "w-09": "IoT Transparent — Blocked Domains",
+            "w-10": "Explicit HTTP — Top URLs",
+            "w-11": "SSL Bump — Top Domains",
+            "w-12": "ClamAV/ICAP Scan Activity",
+            "w-13": "ICAP Response Codes",
+            "w-14": "Denied / Terminated",
+            "w-15": "Recent Proxy Logs"
           },
           "tab": {
             "title": "Proxy & AV"
@@ -304,7 +254,7 @@
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND _exists_:squid_port" },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_port" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
@@ -323,7 +273,7 @@
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy" },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_status" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
@@ -342,19 +292,16 @@
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND squid_port:(3129 OR 3131) AND NOT squid_bump_mode:terminate AND NOT squid_status:TCP_DENIED" },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_client_ip" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
             "config": {
-              "visualization": "table",
-              "visualization_config": null,
-              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 20 } }],
+              "visualization": "bar",
+              "visualization_config": { "barmode": "group", "axis_type": "linear" },
+              "row_pivots": [{ "type": "values", "fields": ["squid_client_ip"], "config": { "limit": 15 } }],
               "column_pivots": [],
-              "series": [
-                { "function": "count()", "config": { "name": "Count" } },
-                { "function": "sum(squid_bytes)", "config": { "name": "Bytes" } }
-              ],
+              "series": [{ "function": "count()", "config": { "name": "Count" } }],
               "sort": [],
               "rollup": true
             }
@@ -364,17 +311,14 @@
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND squid_port:(3129 OR 3131) AND (squid_bump_mode:terminate OR squid_status:TCP_DENIED)" },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_http_code" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
             "config": {
-              "visualization": "table",
+              "visualization": "pie",
               "visualization_config": null,
-              "row_pivots": [
-                { "type": "values", "fields": ["squid_client_ip"], "config": { "limit": 15 } },
-                { "type": "values", "fields": ["squid_sni"], "config": { "limit": 15 } }
-              ],
+              "row_pivots": [{ "type": "values", "fields": ["squid_http_code"], "config": { "limit": 10 } }],
               "column_pivots": [],
               "series": [{ "function": "count()", "config": { "name": "Count" } }],
               "sort": [],
@@ -386,14 +330,14 @@
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND squid_port:3128" },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_sni AND NOT squid_sni:\"-\"" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
             "config": {
-              "visualization": "table",
-              "visualization_config": null,
-              "row_pivots": [{ "type": "values", "fields": ["squid_url"], "config": { "limit": 20 } }],
+              "visualization": "bar",
+              "visualization_config": { "barmode": "group", "axis_type": "linear" },
+              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 20 } }],
               "column_pivots": [],
               "series": [{ "function": "count()", "config": { "name": "Count" } }],
               "sort": [],
@@ -405,29 +349,7 @@
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND squid_port:3130 AND squid_bump_mode:bump" },
-            "stream_categories": [],
-            "streams": [],
-            "timerange": { "type": "relative", "range": 86400 },
-            "config": {
-              "visualization": "table",
-              "visualization_config": null,
-              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 20 } }],
-              "column_pivots": [],
-              "series": [
-                { "function": "count()", "config": { "name": "Count" } },
-                { "function": "sum(squid_bytes)", "config": { "name": "Bytes" } }
-              ],
-              "sort": [],
-              "rollup": true
-            }
-          },
-          {
-            "id": "w-08",
-            "type": "aggregation",
-            "filter": null,
-            "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND NOT squid_bump_mode:\"-\"" },
+            "query": { "type": "elasticsearch", "query_string": "_exists_:squid_bump_mode AND NOT squid_bump_mode:\"-\"" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
@@ -442,7 +364,83 @@
             }
           },
           {
+            "id": "w-08",
+            "type": "aggregation",
+            "filter": null,
+            "filters": [],
+            "query": { "type": "elasticsearch", "query_string": "squid_port:(80 OR 443) AND NOT squid_bump_mode:terminate AND NOT squid_status:TCP_DENIED AND NOT squid_sni:\"-\"" },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": { "type": "relative", "range": 86400 },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": { "barmode": "group", "axis_type": "linear" },
+              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 20 } }],
+              "column_pivots": [],
+              "series": [{ "function": "count()", "config": { "name": "Count" } }],
+              "sort": [],
+              "rollup": true
+            }
+          },
+          {
             "id": "w-09",
+            "type": "aggregation",
+            "filter": null,
+            "filters": [],
+            "query": { "type": "elasticsearch", "query_string": "squid_port:(80 OR 443) AND (squid_bump_mode:terminate OR squid_status:TCP_DENIED)" },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": { "type": "relative", "range": 86400 },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": { "barmode": "group", "axis_type": "linear" },
+              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 15 } }],
+              "column_pivots": [],
+              "series": [{ "function": "count()", "config": { "name": "Count" } }],
+              "sort": [],
+              "rollup": true
+            }
+          },
+          {
+            "id": "w-10",
+            "type": "aggregation",
+            "filter": null,
+            "filters": [],
+            "query": { "type": "elasticsearch", "query_string": "squid_port:3128 AND _exists_:squid_url" },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": { "type": "relative", "range": 86400 },
+            "config": {
+              "visualization": "table",
+              "visualization_config": null,
+              "row_pivots": [{ "type": "values", "fields": ["squid_url"], "config": { "limit": 20 } }],
+              "column_pivots": [],
+              "series": [{ "function": "count()", "config": { "name": "Count" } }],
+              "sort": [],
+              "rollup": true
+            }
+          },
+          {
+            "id": "w-11",
+            "type": "aggregation",
+            "filter": null,
+            "filters": [],
+            "query": { "type": "elasticsearch", "query_string": "squid_port:3130 AND NOT squid_sni:\"-\"" },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": { "type": "relative", "range": 86400 },
+            "config": {
+              "visualization": "bar",
+              "visualization_config": { "barmode": "group", "axis_type": "linear" },
+              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 20 } }],
+              "column_pivots": [],
+              "series": [{ "function": "count()", "config": { "name": "Count" } }],
+              "sort": [],
+              "rollup": true
+            }
+          },
+          {
+            "id": "w-12",
             "type": "aggregation",
             "filter": null,
             "filters": [],
@@ -461,11 +459,11 @@
             }
           },
           {
-            "id": "w-10",
+            "id": "w-13",
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:clamav-icap" },
+            "query": { "type": "elasticsearch", "query_string": "source:clamav-icap AND _exists_:icap_response_code" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
@@ -480,43 +478,18 @@
             }
           },
           {
-            "id": "w-11",
+            "id": "w-14",
             "type": "aggregation",
             "filter": null,
             "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND NOT squid_sni:\"-\"" },
+            "query": { "type": "elasticsearch", "query_string": "squid_status:TCP_DENIED OR squid_bump_mode:terminate OR squid_http_code:403" },
             "stream_categories": [],
             "streams": [],
             "timerange": { "type": "relative", "range": 86400 },
             "config": {
               "visualization": "table",
               "visualization_config": null,
-              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 20 } }],
-              "column_pivots": [],
-              "series": [
-                { "function": "count()", "config": { "name": "Count" } },
-                { "function": "sum(squid_bytes)", "config": { "name": "Bytes" } }
-              ],
-              "sort": [],
-              "rollup": true
-            }
-          },
-          {
-            "id": "w-12",
-            "type": "aggregation",
-            "filter": null,
-            "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy AND (squid_status:TCP_DENIED OR squid_bump_mode:terminate OR squid_http_code:403)" },
-            "stream_categories": [],
-            "streams": [],
-            "timerange": { "type": "relative", "range": 86400 },
-            "config": {
-              "visualization": "table",
-              "visualization_config": null,
-              "row_pivots": [
-                { "type": "values", "fields": ["squid_client_ip"], "config": { "limit": 15 } },
-                { "type": "values", "fields": ["squid_sni"], "config": { "limit": 15 } }
-              ],
+              "row_pivots": [{ "type": "values", "fields": ["squid_sni"], "config": { "limit": 15 } }],
               "column_pivots": [],
               "series": [{ "function": "count()", "config": { "name": "Count" } }],
               "sort": [],
@@ -524,32 +497,7 @@
             }
           },
           {
-            "id": "w-14",
-            "type": "aggregation",
-            "filter": null,
-            "filters": [],
-            "query": { "type": "elasticsearch", "query_string": "source:webproxy" },
-            "stream_categories": [],
-            "streams": [],
-            "timerange": { "type": "relative", "range": 86400 },
-            "config": {
-              "visualization": "table",
-              "visualization_config": null,
-              "row_pivots": [
-                { "type": "values", "fields": ["squid_client_ip"], "config": { "limit": 15 } },
-                { "type": "values", "fields": ["squid_sni"], "config": { "limit": 10 } }
-              ],
-              "column_pivots": [],
-              "series": [
-                { "function": "count()", "config": { "name": "Count" } },
-                { "function": "sum(squid_bytes)", "config": { "name": "Bytes" } }
-              ],
-              "sort": [],
-              "rollup": true
-            }
-          },
-          {
-            "id": "w-13",
+            "id": "w-15",
             "type": "messages",
             "filter": null,
             "filters": [],
@@ -577,36 +525,38 @@
           }
         ],
         "widget_mapping": {
-          "w-01": ["st-01-traffic-source"],
-          "w-02": ["st-02-traffic-port"],
-          "w-03": ["st-03-status-pie"],
-          "w-04": ["st-04-iot-allowed"],
-          "w-05": ["st-05-iot-blocked"],
-          "w-06": ["st-06-explicit-urls"],
-          "w-07": ["st-07-bump-domains"],
-          "w-08": ["st-08-bump-mode-pie"],
-          "w-09": ["st-09-icap-activity"],
-          "w-10": ["st-10-icap-codes"],
-          "w-11": ["st-11-top-domains"],
-          "w-12": ["st-12-denied"],
-          "w-13": ["st-13-messages"],
-          "w-14": ["st-14-top-clients"]
+          "w-01": ["st-01"],
+          "w-02": ["st-02"],
+          "w-03": ["st-03"],
+          "w-04": ["st-04"],
+          "w-05": ["st-05"],
+          "w-06": ["st-06"],
+          "w-07": ["st-07"],
+          "w-08": ["st-08"],
+          "w-09": ["st-09"],
+          "w-10": ["st-10"],
+          "w-11": ["st-11"],
+          "w-12": ["st-12"],
+          "w-13": ["st-13"],
+          "w-14": ["st-14"],
+          "w-15": ["st-15"]
         },
         "positions": {
-          "w-01": { "col": 1, "row": 1, "height": 3, "width": 12 },
-          "w-02": { "col": 1, "row": 4, "height": 3, "width": 8 },
-          "w-03": { "col": 9, "row": 4, "height": 3, "width": 4 },
-          "w-14": { "col": 1, "row": 7, "height": 4, "width": 12 },
-          "w-04": { "col": 1, "row": 11, "height": 4, "width": 6 },
-          "w-05": { "col": 7, "row": 11, "height": 4, "width": 6 },
-          "w-06": { "col": 1, "row": 15, "height": 4, "width": 6 },
-          "w-07": { "col": 7, "row": 15, "height": 4, "width": 6 },
-          "w-08": { "col": 1, "row": 19, "height": 3, "width": 4 },
-          "w-09": { "col": 5, "row": 19, "height": 3, "width": 5 },
-          "w-10": { "col": 10, "row": 19, "height": 3, "width": 3 },
-          "w-11": { "col": 1, "row": 22, "height": 4, "width": 6 },
-          "w-12": { "col": 7, "row": 22, "height": 4, "width": 6 },
-          "w-13": { "col": 1, "row": 26, "height": 5, "width": 12 }
+          "w-01": { "col": 1, "row": 1,  "height": 3, "width": 12 },
+          "w-02": { "col": 1, "row": 4,  "height": 3, "width": 8 },
+          "w-03": { "col": 9, "row": 4,  "height": 3, "width": 4 },
+          "w-04": { "col": 1, "row": 7,  "height": 3, "width": 8 },
+          "w-05": { "col": 9, "row": 7,  "height": 3, "width": 4 },
+          "w-06": { "col": 1, "row": 10, "height": 3, "width": 8 },
+          "w-07": { "col": 9, "row": 10, "height": 3, "width": 4 },
+          "w-08": { "col": 1, "row": 13, "height": 3, "width": 6 },
+          "w-09": { "col": 7, "row": 13, "height": 3, "width": 6 },
+          "w-10": { "col": 1, "row": 16, "height": 4, "width": 6 },
+          "w-11": { "col": 7, "row": 16, "height": 4, "width": 6 },
+          "w-12": { "col": 1, "row": 20, "height": 3, "width": 5 },
+          "w-13": { "col": 6, "row": 20, "height": 3, "width": 3 },
+          "w-14": { "col": 9, "row": 20, "height": 3, "width": 4 },
+          "w-15": { "col": 1, "row": 23, "height": 5, "width": 12 }
         },
         "formatting": null,
         "display_mode_settings": { "positions": {} }

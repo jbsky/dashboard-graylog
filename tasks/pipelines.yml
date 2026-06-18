@@ -1,4 +1,4 @@
-# tasks/pipelines.yml — Graylog pipeline management (Firewall + DNS + Web + Proxy)
+# tasks/pipelines.yml — Graylog pipeline management (Firewall + DNS + Web + Proxy + WAF)
 # Deploys pipeline rules that extract fields required by the dashboards.
 # Requires: GeoIP lookup tables already created (from graylog server role)
 ---
@@ -390,6 +390,87 @@
       source: "{{ graylog_proxy_pipeline_rule_squid }}"
     status_code: [200, 201]
   when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Squid Fields') | list | length > 0
+  tags: [config]
+
+# ── WAF Pipeline ──────────────────────────────────────────────
+- name: Create WAF pipeline
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "WAF Log Processing"
+      description: "ModSecurity JSON audit log field extraction (client IP, hostname, URI, method, HTTP code)"
+      source: "{{ graylog_waf_pipeline_source }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _waf_pipeline_created
+  when: _pipelines.json | selectattr('title', 'equalto', 'WAF Log Processing') | list | length == 0
+  tags: [config]
+
+- name: Update WAF pipeline source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline/{{ (_pipelines.json | selectattr('title', 'equalto', 'WAF Log Processing') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _pipelines.json | selectattr('title', 'equalto', 'WAF Log Processing') | map(attribute='id') | first }}"
+      title: "WAF Log Processing"
+      description: "ModSecurity JSON audit log field extraction (client IP, hostname, URI, method, HTTP code)"
+      source: "{{ graylog_waf_pipeline_source }}"
+    status_code: [200, 201]
+  when: _pipelines.json | selectattr('title', 'equalto', 'WAF Log Processing') | list | length > 0
+  tags: [config]
+
+- name: Create WAF rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Extract WAF Fields"
+      description: "Parse ModSecurity v3 JSON audit log: client IP, hostname, URI, method, HTTP code, interrupted status"
+      source: "{{ graylog_waf_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract WAF Fields') | list | length == 0
+  tags: [config]
+
+- name: Update WAF rule source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule/{{ (_existing_rules.json | selectattr('title', 'equalto', 'Extract WAF Fields') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _existing_rules.json | selectattr('title', 'equalto', 'Extract WAF Fields') | map(attribute='id') | first }}"
+      title: "Extract WAF Fields"
+      description: "Parse ModSecurity v3 JSON audit log: client IP, hostname, URI, method, HTTP code, interrupted status"
+      source: "{{ graylog_waf_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract WAF Fields') | list | length > 0
   tags: [config]
 
 # ── Connect all pipelines to Default Stream ───────────────────

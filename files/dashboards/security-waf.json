@@ -35,7 +35,7 @@
             "filters": [],
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec* OR source:crowdsec* OR _exists_:fw_rule"
+              "query_string": "_exists_:waf_client_ip OR source:crowdsec* OR _exists_:fw_rule"
             },
             "stream_categories": [],
             "streams": [],
@@ -92,7 +92,7 @@
             "filters": [],
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec*"
+              "query_string": "_exists_:waf_client_ip"
             },
             "stream_categories": [],
             "streams": [],
@@ -107,7 +107,7 @@
                 {
                   "type": "values",
                   "fields": [
-                    "source"
+                    "waf_hostname"
                   ],
                   "config": {
                     "limit": 10
@@ -196,7 +196,7 @@
             "filters": [],
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec* OR source:crowdsec*"
+              "query_string": "_exists_:waf_client_ip OR source:crowdsec*"
             },
             "stream_categories": [],
             "streams": [],
@@ -525,7 +525,7 @@
             "filters": [],
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec* OR source:crowdsec* OR _exists_:fw_rule"
+              "query_string": "_exists_:waf_client_ip OR source:crowdsec* OR _exists_:fw_rule"
             },
             "stream_categories": [],
             "streams": [],
@@ -677,7 +677,7 @@
             "type": "pivot",
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec* OR source:crowdsec* OR _exists_:fw_rule"
+              "query_string": "_exists_:waf_client_ip OR source:crowdsec* OR _exists_:fw_rule"
             },
             "timerange": {
               "type": "relative",
@@ -713,7 +713,7 @@
             "type": "pivot",
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec*"
+              "query_string": "_exists_:waf_client_ip"
             },
             "timerange": {
               "type": "relative",
@@ -731,7 +731,7 @@
             "row_groups": [
               {
                 "type": "values",
-                "field": "source",
+                "field": "waf_hostname",
                 "limit": 10
               }
             ],
@@ -779,7 +779,7 @@
             "type": "pivot",
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec* OR source:crowdsec*"
+              "query_string": "_exists_:waf_client_ip OR source:crowdsec*"
             },
             "timerange": {
               "type": "relative",
@@ -986,7 +986,7 @@
             "type": "messages",
             "query": {
               "type": "elasticsearch",
-              "query_string": "source:modsec* OR source:crowdsec* OR _exists_:fw_rule"
+              "query_string": "_exists_:waf_client_ip OR source:crowdsec* OR _exists_:fw_rule"
             },
             "timerange": {
               "type": "relative",

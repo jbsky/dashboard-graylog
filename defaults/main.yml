@@ -36,6 +36,7 @@ graylog_pipeline_titles:
   - "DNS Log Processing"
   - "Web Log Processing"
   - "Proxy Log Processing"
+  - "WAF Log Processing"
 
 # ── Pipeline (Firewall Log Processing) ───────────────────────
 graylog_pipeline_source: |
@@ -257,4 +258,38 @@ graylog_proxy_pipeline_rule_squid: |
     set_field("squid_sni", to_string(squid["6"]));
     set_field("squid_bump_mode", to_string(squid["7"]));
     set_field("squid_port", to_long(squid["8"]));
+  end
+
+# ── Pipeline (WAF Log Processing) ────────────────────────────
+graylog_waf_pipeline_source: |
+  pipeline "WAF Log Processing"
+  stage 0 match either
+    rule "Extract WAF Fields"
+  end
+
+graylog_waf_pipeline_rule_source: |
+  rule "Extract WAF Fields"
+  when
+    has_field("message") AND
+    contains(to_string($message.message), "\"transaction\"") AND
+    contains(to_string($message.message), "\"modsecurity\"")
+  then
+    let msg = to_string($message.message);
+
+    let fields = select_jsonpath(msg, {
+      client_ip:   "$.transaction.client_ip",
+      hostname:    "$.transaction.request.hostname",
+      uri:         "$.transaction.request.uri",
+      method:      "$.transaction.request.method",
+      http_code:   "$.transaction.response.http_code",
+      interrupted: "$.transaction.is_interrupted"
+    });
+
+    set_field("waf_client_ip",   to_string(fields["client_ip"]));
+    set_field("waf_hostname",    to_string(fields["hostname"]));
+    set_field("waf_uri",         to_string(fields["uri"]));
+    set_field("waf_method",      to_string(fields["method"]));
+    set_field("waf_http_code",   to_long(fields["http_code"]));
+    set_field("waf_interrupted", to_string(fields["interrupted"]));
+    set_field("waf_server",      to_string($message.source));
   end

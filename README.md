@@ -177,19 +177,19 @@ Kubernetes cluster and container runtime logs.
 
 ### Security & WAF
 
-ModSecurity WAF events, CrowdSec decisions, and firewall drops.
+ModSecurity WAF events (via pipeline-extracted `waf_*` fields), CrowdSec decisions, and firewall drops.
 
 ```
 +---------------------------------------------------------------+
 | Security Events Over Time                         (bar)       |
 +-------------------------------------------+-------------------+
 | Top Firewall Rules (Drops)        (bar)   | WAF Instances     |
-|                                           |            (pie)  |
+|                                           | (hostname)  (pie) |
 +-------------------------------------------+-------------------+
 | CrowdSec Decisions                (bar)   | Security          |
 |                                           | Levels     (pie)  |
 +-------------------------------------------+-------------------+
-| Inbound Interfaces (VLANs)       (bar)   | Blocked           |
+| Inbound Interfaces (VLANs)        (bar)   | Blocked           |
 |                                           | Protocols  (pie)  |
 +-------------------------------------------+-------------------+
 | Security Zones Over Time    (bar, stack)  | Top Blocked       |
@@ -201,6 +201,8 @@ ModSecurity WAF events, CrowdSec decisions, and firewall drops.
 
 **10 widgets** -- bar charts, stacked timeline, pies, message table
 
+WAF Instances shows breakdown by `waf_hostname` (site protected by ModSecurity).
+
 ---
 
 ## Pipelines
@@ -211,6 +213,7 @@ ModSecurity WAF events, CrowdSec decisions, and firewall drops.
 | DNS Log Processing | Extract DNS Fields | `dns_client_ip`, `dns_domain`, `dns_view`, `dns_query_type`, `dns_status`, `dns_geolocation`, `dns_country` |
 | Web Log Processing | Extract Web Fields | `http_method`, `http_url`, `http_status`, `http_response_size`, `http_client_ip` |
 | Proxy Log Processing | Set Proxy Source, Extract Squid Fields | `squid_client_ip`, `squid_status`, `squid_http_code`, `squid_bytes`, `squid_method`, `squid_url`, `squid_sni`, `squid_bump_mode`, `squid_port`, `icap_mode`, `icap_response_code` |
+| WAF Log Processing | Extract WAF Fields | `waf_client_ip`, `waf_hostname`, `waf_uri`, `waf_method`, `waf_http_code`, `waf_interrupted`, `waf_server` |
 
 ---
 
@@ -261,6 +264,22 @@ Three formats supported (auto-detected by source name):
 # Traefik (CLF): IP - - [date] "METHOD URL HTTP/x.x" STATUS SIZE ...
 # HAProxy: ... timers STATUS SIZE ... "METHOD URL HTTP/x.x"
 # nginx: ... "METHOD URL HTTP/x.x" STATUS SIZE
+```
+
+### ModSecurity (WAF Log Processing)
+
+ModSecurity v3 JSON audit log format. Messages are matched by the presence of `"transaction"` and `"modsecurity"` in the JSON body. The `source` field is the K8s pod name (e.g., `jbsky-fr-production-wordpress-*`).
+
+```json
+{
+  "transaction": {
+    "client_ip": "91.92.243.245",
+    "request": { "method": "POST", "hostname": "jbsky.fr", "uri": "/wp-login.php" },
+    "response": { "http_code": 503 },
+    "is_interrupted": false,
+    "producer": { "modsecurity": "ModSecurity v3.0.15", "components": ["OWASP_CRS/4.25.0"] }
+  }
+}
 ```
 
 ---

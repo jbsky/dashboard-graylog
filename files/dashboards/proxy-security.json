@@ -212,6 +212,27 @@
             "sort": []
           },
           {
+            "id": "st-14-top-clients",
+            "type": "pivot",
+            "query": {
+              "type": "elasticsearch",
+              "query_string": "source:webproxy"
+            },
+            "timerange": { "type": "relative", "range": 86400 },
+            "streams": [],
+            "series": [
+              { "type": "count", "id": "s-14a", "field": null },
+              { "type": "sum", "id": "s-14b", "field": "squid_bytes" }
+            ],
+            "rollup": true,
+            "row_groups": [
+              { "type": "values", "field": "squid_client_ip", "limit": 15 },
+              { "type": "values", "field": "squid_sni", "limit": 10 }
+            ],
+            "column_groups": [],
+            "sort": []
+          },
+          {
             "id": "st-13-messages",
             "type": "messages",
             "query": {
@@ -251,7 +272,8 @@
             "w-10": "ICAP Response Codes",
             "w-11": "Top Domains (all)",
             "w-12": "Denied / Terminated",
-            "w-13": "Recent Proxy Logs"
+            "w-13": "Recent Proxy Logs",
+            "w-14": "Top Clients"
           },
           "tab": {
             "title": "Proxy & AV"
@@ -502,6 +524,31 @@
             }
           },
           {
+            "id": "w-14",
+            "type": "aggregation",
+            "filter": null,
+            "filters": [],
+            "query": { "type": "elasticsearch", "query_string": "source:webproxy" },
+            "stream_categories": [],
+            "streams": [],
+            "timerange": { "type": "relative", "range": 86400 },
+            "config": {
+              "visualization": "table",
+              "visualization_config": null,
+              "row_pivots": [
+                { "type": "values", "fields": ["squid_client_ip"], "config": { "limit": 15 } },
+                { "type": "values", "fields": ["squid_sni"], "config": { "limit": 10 } }
+              ],
+              "column_pivots": [],
+              "series": [
+                { "function": "count()", "config": { "name": "Count" } },
+                { "function": "sum(squid_bytes)", "config": { "name": "Bytes" } }
+              ],
+              "sort": [],
+              "rollup": true
+            }
+          },
+          {
             "id": "w-13",
             "type": "messages",
             "filter": null,
@@ -542,22 +589,24 @@
           "w-10": ["st-10-icap-codes"],
           "w-11": ["st-11-top-domains"],
           "w-12": ["st-12-denied"],
-          "w-13": ["st-13-messages"]
+          "w-13": ["st-13-messages"],
+          "w-14": ["st-14-top-clients"]
         },
         "positions": {
           "w-01": { "col": 1, "row": 1, "height": 3, "width": 12 },
           "w-02": { "col": 1, "row": 4, "height": 3, "width": 8 },
           "w-03": { "col": 9, "row": 4, "height": 3, "width": 4 },
-          "w-04": { "col": 1, "row": 7, "height": 4, "width": 6 },
-          "w-05": { "col": 7, "row": 7, "height": 4, "width": 6 },
-          "w-06": { "col": 1, "row": 11, "height": 4, "width": 6 },
-          "w-07": { "col": 7, "row": 11, "height": 4, "width": 6 },
-          "w-08": { "col": 1, "row": 15, "height": 3, "width": 4 },
-          "w-09": { "col": 5, "row": 15, "height": 3, "width": 5 },
-          "w-10": { "col": 10, "row": 15, "height": 3, "width": 3 },
-          "w-11": { "col": 1, "row": 18, "height": 4, "width": 6 },
-          "w-12": { "col": 7, "row": 18, "height": 4, "width": 6 },
-          "w-13": { "col": 1, "row": 22, "height": 5, "width": 12 }
+          "w-14": { "col": 1, "row": 7, "height": 4, "width": 12 },
+          "w-04": { "col": 1, "row": 11, "height": 4, "width": 6 },
+          "w-05": { "col": 7, "row": 11, "height": 4, "width": 6 },
+          "w-06": { "col": 1, "row": 15, "height": 4, "width": 6 },
+          "w-07": { "col": 7, "row": 15, "height": 4, "width": 6 },
+          "w-08": { "col": 1, "row": 19, "height": 3, "width": 4 },
+          "w-09": { "col": 5, "row": 19, "height": 3, "width": 5 },
+          "w-10": { "col": 10, "row": 19, "height": 3, "width": 3 },
+          "w-11": { "col": 1, "row": 22, "height": 4, "width": 6 },
+          "w-12": { "col": 7, "row": 22, "height": 4, "width": 6 },
+          "w-13": { "col": 1, "row": 26, "height": 5, "width": 12 }
         },
         "formatting": null,
         "display_mode_settings": { "positions": {} }

@@ -244,13 +244,17 @@ graylog_proxy_pipeline_rule_squid: |
     has_field("source") AND to_string($message.source) == "webproxy"
   then
     // Squid syslog_multi format (after syslog header stripping):
-    // EPOCH.MS RTIME CLIENT STATUS/HTTP_CODE SIZE METHOD URL USER HIER/PEER MIME SNI BUMP_MODE
+    // EPOCH.MS RTIME CLIENT STATUS/HTTP_CODE BYTES METHOD URL USER HIER/PEER MIME SNI BUMP_MODE PORT
     let msg = to_string($message.message);
-    let squid = regex("\\S+\\s+\\d+\\s+(\\S+)\\s+(\\w+)/(\\d+)\\s+\\d+\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\S+/\\S+\\s+\\S+\\s+(\\S+)\\s+(\\S+)", msg);
+    let squid = regex("\\S+\\s+\\d+\\s+(\\S+)\\s+(\\w+)/(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+\\S+\\s+\\S+/\\S+\\s+\\S+\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)", msg);
 
     set_field("squid_client_ip", to_string(squid["0"]));
     set_field("squid_status", to_string(squid["1"]));
     set_field("squid_http_code", to_long(squid["2"]));
-    set_field("squid_sni", to_string(squid["3"]));
-    set_field("squid_bump_mode", to_string(squid["4"]));
+    set_field("squid_bytes", to_long(squid["3"]));
+    set_field("squid_method", to_string(squid["4"]));
+    set_field("squid_url", to_string(squid["5"]));
+    set_field("squid_sni", to_string(squid["6"]));
+    set_field("squid_bump_mode", to_string(squid["7"]));
+    set_field("squid_port", to_long(squid["8"]));
   end

@@ -18,25 +18,7 @@ Ansible Galaxy role to deploy Graylog dashboards and field-extraction pipelines 
 
 VyOS netfilter logs enriched with MaxMind GeoIP data.
 
-```
-+---------------------------------------------------------------+
-| Blocked Connections Timeline                          (bar)   |
-+-------------------------------------------+-------------------+
-| Attack Origins - World Map        (map)   | Top Source        |
-|                                           | Countries  (pie)  |
-+-------------------------------------------+-------------------+
-| Top Source Cities                  (bar)   | Network           |
-|                                           | Protocols  (pie)  |
-+-------------------------------------------+-------------------+
-| Top Firewall Rules                 (bar)   | Top Source IPs    |
-|                                            |            (bar)  |
-+--------------------------------------------+------------------+
-| Top ASN                            (bar)   | Blocked by       |
-|                                            | Country    (bar)  |
-+--------------------------------------------+------------------+
-| Recent Firewall Logs                            (messages)    |
-+---------------------------------------------------------------+
-```
+![Firewall GeoIP Dashboard](screenshots/firewall-geoip.png)
 
 **10 widgets** -- bar charts, pies, world map, message table
 
@@ -44,29 +26,7 @@ VyOS netfilter logs enriched with MaxMind GeoIP data.
 
 BIND9 query logs with view-based split-horizon analytics and GeoIP.
 
-```
-+---------------------------------------------------------------+
-| DNS Query Volume Over Time                      (bar, stack)  |
-+-------------------------------------------+-------------------+
-| Top Queried Domains                (bar)  | Query Types (pie) |
-+-------------------------------------------+-------------------+
-| Top DNS Clients                    (bar)  | DNS Response      |
-|                                           | Status     (pie)  |
-+-------------------------------------------+-------------------+
-| Query Types Over Time        (bar, stack) | Traffic by        |
-|                                           | View       (pie)  |
-+-------------------------------------------+-------------------+
-| External DNS Clients - World Map  (map)   | External Queries  |
-|                                           | by Country (bar)  |
-+-------------------------------------------+-------------------+
-| External Queries by ASN           (bar)   | Refused & Failed  |
-|                                           | Queries   (table) |
-+-------------------------------------------+-------------------+
-| Queries by View Over Time   (bar, stack)  |
-+-------------------------------------------+-------------------+
-| Recent DNS Queries                              (messages)    |
-+---------------------------------------------------------------+
-```
+![BIND DNS Operations Dashboard](screenshots/bind-dns.png)
 
 **13 widgets** -- bar charts, stacked timelines, pies, world map, table, message table
 
@@ -74,22 +34,7 @@ BIND9 query logs with view-based split-horizon analytics and GeoIP.
 
 HTTP request logs from Traefik, HAProxy, nginx and WordPress.
 
-```
-+---------------------------------------------------------------+
-| HTTP Requests Over Time                           (bar)       |
-+-------------------------------------------+-------------------+
-| Traefik Errors Over Time          (bar)   | Web Sources (pie) |
-+-------------------------------------------+-------------------+
-| HAProxy Backends                  (bar)   | Log Levels  (pie) |
-+-------------------------------------------+-------------------+
-| WordPress Activity                (bar)   | HTTP Status       |
-|                                           | Codes      (pie)  |
-+-------------------------------------------+-------------------+
-| Web Error Table                 (table)   | Top URLs  (table) |
-+-------------------------------------------+-------------------+
-| Recent Web Logs                                 (messages)    |
-+---------------------------------------------------------------+
-```
+![Web Traffic Dashboard](screenshots/web-traffic.png)
 
 **10 widgets** -- bar charts, pies, sorted tables, message table
 
@@ -97,31 +42,7 @@ HTTP request logs from Traefik, HAProxy, nginx and WordPress.
 
 Squid multi-mode proxy (explicit + transparent IoT) with ClamAV/c-icap antivirus scanning.
 
-```
-+---------------------------------------------------------------+
-| Proxy Traffic Over Time                         (bar, stack)  |
-+-------------------------------------------+-------------------+
-| Traffic by Port              (bar, stack) | Cache Status      |
-|                                           | Distribution(pie) |
-+-------------------------------------------+-------------------+
-| Top Clients                       (bar)   | HTTP Response     |
-|                                           | Codes      (pie)  |
-+-------------------------------------------+-------------------+
-| Top Domains                       (bar)   | Bump Mode         |
-|                                           | Distribution(pie) |
-+-------------------------------+-----------+-------------------+
-| IoT Transparent               | IoT Transparent               |
-| Allowed Domains        (bar)  | Blocked Domains        (bar)  |
-+-------------------------------+-------------------------------+
-| Explicit HTTP                 | SSL Bump                      |
-| Top URLs               (bar) | Top Domains             (bar) |
-+---------------------+---------+-----------+-------------------+
-| ClamAV/ICAP Scan    | ICAP Response       | Denied /          |
-| Activity (bar,stack) | Codes        (pie)  | Terminated  (bar) |
-+---------------------+---------------------+-------------------+
-| Recent Proxy Logs                                 (messages)  |
-+---------------------------------------------------------------+
-```
+![Proxy & AV Security Dashboard](screenshots/proxy-security.png)
 
 **15 widgets** -- 3 stacked timelines, 7 bar charts, 4 pies, 1 message table
 
@@ -137,19 +58,7 @@ Port mapping (`%>lp` reports original destination port in transparent/intercept 
 
 Proxmox VE hypervisor syslog events.
 
-```
-+---------------------------------------------------------------+
-| Log Volume (PVE)                            (bar, stack)      |
-+-------------------------------------------+-------------------+
-| Proxmox Events Over Time          (bar)   | Top Sources (pie) |
-+-------------------------------------------+-------------------+
-| Errors (PVE)                      (bar)   | Log Levels  (pie) |
-+-------------------------------------------+-------------------+
-| Facilities                        (pie)   | Services    (pie) |
-+-------------------------------------------+-------------------+
-| Recent PVE Logs                                 (messages)    |
-+---------------------------------------------------------------+
-```
+![Infrastructure (Proxmox) Dashboard](screenshots/infrastructure-proxmox.png)
 
 **8 widgets** -- bar charts, pies, message table
 
@@ -157,21 +66,7 @@ Proxmox VE hypervisor syslog events.
 
 Kubernetes cluster and container runtime logs.
 
-```
-+---------------------------------------------------------------+
-| Log Volume (K3s)                            (bar, stack)      |
-+-------------------------------------------+-------------------+
-| Errors (K3s)                      (bar)   | Top Sources (pie) |
-+-------------------------------------------+-------------------+
-| Pods (containers)                 (pie)   | Log Levels  (pie) |
-+-------------------------------------------+-------------------+
-| Tags (namespaces)                 (pie)   | Images      (pie) |
-+-------------------------------------------+-------------------+
-| Nodes                             (pie)   |                   |
-+-------------------------------------------+-------------------+
-| Recent K3s Logs                                 (messages)    |
-+---------------------------------------------------------------+
-```
+![K3s & Containers Dashboard](screenshots/k3s-containers.png)
 
 **9 widgets** -- bar charts, pies, message table
 
@@ -179,25 +74,7 @@ Kubernetes cluster and container runtime logs.
 
 ModSecurity WAF events (via pipeline-extracted `waf_*` fields), CrowdSec decisions, and firewall drops.
 
-```
-+---------------------------------------------------------------+
-| Security Events Over Time                         (bar)       |
-+-------------------------------------------+-------------------+
-| Top Firewall Rules (Drops)        (bar)   | WAF Instances     |
-|                                           | (hostname)  (pie) |
-+-------------------------------------------+-------------------+
-| CrowdSec Decisions                (bar)   | Security          |
-|                                           | Levels     (pie)  |
-+-------------------------------------------+-------------------+
-| Inbound Interfaces (VLANs)        (bar)   | Blocked           |
-|                                           | Protocols  (pie)  |
-+-------------------------------------------+-------------------+
-| Security Zones Over Time    (bar, stack)  | Top Blocked       |
-|                                           | Dest Ports  (bar) |
-+-------------------------------------------+-------------------+
-| Recent Security Events                          (messages)    |
-+---------------------------------------------------------------+
-```
+![Security & WAF Dashboard](screenshots/security-waf.png)
 
 **10 widgets** -- bar charts, stacked timeline, pies, message table
 

@@ -80,6 +80,20 @@ ModSecurity WAF events (via pipeline-extracted `waf_*` fields), CrowdSec decisio
 
 WAF Instances shows breakdown by `waf_hostname` (site protected by ModSecurity).
 
+### Suricata IPS
+
+Suricata 8 NFQUEUE inline IPS: alerts, drops, signatures, categories, protocols, GeoIP.
+
+![Suricata IPS Dashboard](screenshots/suricata-ips.png)
+
+**12 widgets** -- stacked timeline, bar charts, pies, message table
+
+Action mapping:
+| Action | Meaning |
+|--------|---------|
+| `blocked` | Packet dropped by NFQUEUE verdict (rule action: `drop`) |
+| `allowed` | Alert generated but packet passed (rule action: `alert`) |
+
 ---
 
 ## Pipelines
@@ -91,6 +105,7 @@ WAF Instances shows breakdown by `waf_hostname` (site protected by ModSecurity).
 | Web Log Processing | Extract Web Fields | `http_method`, `http_url`, `http_status`, `http_response_size`, `http_client_ip` |
 | Proxy Log Processing | Set Proxy Source, Extract Squid Fields | `squid_client_ip`, `squid_status`, `squid_http_code`, `squid_bytes`, `squid_method`, `squid_url`, `squid_sni`, `squid_bump_mode`, `squid_port`, `icap_mode`, `icap_response_code` |
 | WAF Log Processing | Extract WAF Fields | `waf_client_ip`, `waf_hostname`, `waf_uri`, `waf_method`, `waf_http_code`, `waf_interrupted`, `waf_server` |
+| Suricata IPS Processing | Extract Suricata EVE Fields | `ids_event_type`, `ids_src_ip`, `ids_src_port`, `ids_dest_ip`, `ids_dest_port`, `ids_proto`, `ids_action`, `ids_signature_id`, `ids_signature`, `ids_category`, `ids_severity`, `ids_direction`, `ids_geolocation`, `ids_country` |
 
 ---
 
@@ -158,6 +173,26 @@ ModSecurity v3 JSON audit log format. Messages are matched by the presence of `"
   }
 }
 ```
+
+### Suricata (Suricata IPS Processing)
+
+Suricata EVE JSON format forwarded via rsyslog `imfile` on VyOS. Messages are matched by `suricata {` and `event_type` in the message body.
+
+```
+# /config/etc/rsyslog/10-suricata.conf on VyOS
+input(type="imfile" File="/var/log/suricata/eve.json" Tag="suricata" Severity="info" Facility="local6")
+```
+
+Message format in Graylog (syslog prefix + EVE JSON):
+```
+vyos suricata {"timestamp":"...","event_type":"alert","src_ip":"1.2.3.4","src_port":12345,
+  "dest_ip":"172.20.1.10","dest_port":80,"proto":"TCP",
+  "alert":{"action":"blocked","signature_id":2400014,"signature":"ET DROP Spamhaus...",
+           "category":"Misc Attack","severity":2},
+  "direction":"to_server","flow":{...}}
+```
+
+The pipeline uses `select_jsonpath` after stripping the `vyos suricata ` syslog prefix to extract pure JSON.
 
 ---
 

@@ -24,6 +24,8 @@ graylog_dashboards:
     file: "security-waf.json"
   - title: "Proxy & AV Security"
     file: "proxy-security.json"
+  - title: "Suricata IPS Dashboard"
+    file: "suricata-ips.json"
 
 # ══════════════════════════════════════════════════════════════
 # Pipeline management — field extraction for dashboards
@@ -37,6 +39,7 @@ graylog_pipeline_titles:
   - "Web Log Processing"
   - "Proxy Log Processing"
   - "WAF Log Processing"
+  - "Suricata IPS Processing"
 
 # ── Pipeline (Firewall Log Processing) ───────────────────────
 graylog_pipeline_source: |
@@ -292,4 +295,61 @@ graylog_waf_pipeline_rule_source: |
     set_field("waf_http_code",   to_long(fields["http_code"]));
     set_field("waf_interrupted", to_string(fields["interrupted"]));
     set_field("waf_server",      to_string($message.source));
+  end
+
+# ── Pipeline (Suricata IPS Processing) ───────────────────────
+graylog_suricata_pipeline_source: |
+  pipeline "Suricata IPS Processing"
+  stage 0 match either
+    rule "Extract Suricata EVE Fields"
+  end
+
+graylog_suricata_pipeline_rule_source: |
+  rule "Extract Suricata EVE Fields"
+  when
+    has_field("message") AND
+    contains(to_string($message.message), "suricata {") AND
+    contains(to_string($message.message), "event_type")
+  then
+    let msg = to_string($message.message);
+
+    // Strip syslog prefix "vyos suricata " to get pure JSON
+    let json_match = regex("suricata (\\{.+)", msg);
+    let json_str = to_string(json_match["0"]);
+
+    let fields = select_jsonpath(json_str, {
+      event_type:   "$.event_type",
+      src_ip:       "$.src_ip",
+      src_port:     "$.src_port",
+      dest_ip:      "$.dest_ip",
+      dest_port:    "$.dest_port",
+      proto:        "$.proto",
+      action:       "$.alert.action",
+      signature_id: "$.alert.signature_id",
+      signature:    "$.alert.signature",
+      category:     "$.alert.category",
+      severity:     "$.alert.severity",
+      direction:    "$.direction"
+    });
+
+    set_field("ids_event_type",   to_string(fields["event_type"]));
+    set_field("ids_src_ip",       to_string(fields["src_ip"]));
+    set_field("ids_src_port",     to_long(fields["src_port"]));
+    set_field("ids_dest_ip",      to_string(fields["dest_ip"]));
+    set_field("ids_dest_port",    to_long(fields["dest_port"]));
+    set_field("ids_proto",        to_string(fields["proto"]));
+    set_field("ids_action",       to_string(fields["action"]));
+    set_field("ids_signature_id", to_long(fields["signature_id"]));
+    set_field("ids_signature",    to_string(fields["signature"]));
+    set_field("ids_category",     to_string(fields["category"]));
+    set_field("ids_severity",     to_long(fields["severity"]));
+    set_field("ids_direction",    to_string(fields["direction"]));
+
+    // GeoIP enrichment on source IP
+    let src_ip_str = to_string(fields["src_ip"]);
+    let city = lookup("geoip-city", src_ip_str);
+    set_field("ids_geolocation", to_string(city["coordinates"]));
+    let country_str = to_string(city["country"]);
+    let country_match = regex("isoCode=(\\w+)", country_str);
+    set_field("ids_country", to_string(country_match["0"]));
   end

@@ -1,4 +1,4 @@
-# tasks/pipelines.yml — Graylog pipeline management (Firewall + DNS + Web + Proxy + WAF)
+# tasks/pipelines.yml — Graylog pipeline management (Firewall + DNS + Web + Proxy + WAF + Suricata)
 # Deploys pipeline rules that extract fields required by the dashboards.
 # Requires: GeoIP lookup tables already created (from graylog server role)
 ---
@@ -471,6 +471,87 @@
       source: "{{ graylog_waf_pipeline_rule_source }}"
     status_code: [200, 201]
   when: _existing_rules.json | selectattr('title', 'equalto', 'Extract WAF Fields') | list | length > 0
+  tags: [config]
+
+# ── Suricata Pipeline ─────────────────────────────────────────
+- name: Create Suricata pipeline
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Suricata IPS Processing"
+      description: "Suricata EVE JSON alert/drop field extraction + GeoIP"
+      source: "{{ graylog_suricata_pipeline_source }}"
+    status_code: [200, 201]
+    return_content: true
+  register: _suricata_pipeline_created
+  when: _pipelines.json | selectattr('title', 'equalto', 'Suricata IPS Processing') | list | length == 0
+  tags: [config]
+
+- name: Update Suricata pipeline source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/pipeline/{{ (_pipelines.json | selectattr('title', 'equalto', 'Suricata IPS Processing') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _pipelines.json | selectattr('title', 'equalto', 'Suricata IPS Processing') | map(attribute='id') | first }}"
+      title: "Suricata IPS Processing"
+      description: "Suricata EVE JSON alert/drop field extraction + GeoIP"
+      source: "{{ graylog_suricata_pipeline_source }}"
+    status_code: [200, 201]
+  when: _pipelines.json | selectattr('title', 'equalto', 'Suricata IPS Processing') | list | length > 0
+  tags: [config]
+
+- name: Create Suricata rule
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule"
+    method: POST
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      title: "Extract Suricata EVE Fields"
+      description: "Parse Suricata EVE JSON: src/dest IP, ports, proto, signature, category, severity, action + GeoIP"
+      source: "{{ graylog_suricata_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Suricata EVE Fields') | list | length == 0
+  tags: [config]
+
+- name: Update Suricata rule source
+  ansible.builtin.uri:
+    url: "{{ graylog_api_url }}/api/system/pipelines/rule/{{ (_existing_rules.json | selectattr('title', 'equalto', 'Extract Suricata EVE Fields') | map(attribute='id') | first) }}"
+    method: PUT
+    user: "{{ graylog_root_username }}"
+    password: "{{ vault_graylog_root_password }}"
+    force_basic_auth: true
+    headers:
+      X-Requested-By: ansible
+      Content-Type: application/json
+    body_format: json
+    body:
+      id: "{{ _existing_rules.json | selectattr('title', 'equalto', 'Extract Suricata EVE Fields') | map(attribute='id') | first }}"
+      title: "Extract Suricata EVE Fields"
+      description: "Parse Suricata EVE JSON: src/dest IP, ports, proto, signature, category, severity, action + GeoIP"
+      source: "{{ graylog_suricata_pipeline_rule_source }}"
+    status_code: [200, 201]
+  when: _existing_rules.json | selectattr('title', 'equalto', 'Extract Suricata EVE Fields') | list | length > 0
   tags: [config]
 
 # ── Connect all pipelines to Default Stream ───────────────────

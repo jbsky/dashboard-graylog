@@ -3,7 +3,7 @@
 galaxy_info:
   role_name: dashboard_graylog
   author: jbsky
-  description: Deploy and manage Graylog dashboards via API (idempotent, recreate mode)
+  description: Graylog dashboard and pipeline deployment via REST API -- deploys Suricata IPS, firewall, DNS, proxy, WAF dashboards with field extraction pipelines
   company: ""
   license: MIT
   min_ansible_version: "2.14"

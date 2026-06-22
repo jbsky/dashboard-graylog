@@ -25,5 +25,17 @@ galaxy_info:
     - monitoring
     - logging
     - observability
+    - siem
+    - suricata
+    - ids
+    - ips
+    - firewall
+    - dns
+    - waf
+    - proxy
+    - security
+    - elasticsearch
+    - opensearch
+    - geoip
 
 dependencies: []
